@@ -1,0 +1,22 @@
+{
+  "welcome": {
+    "modal": {
+      "title": "Get connected",
+      "description": "Complete the following form to establish a connection with the instance."
+    }
+  },
+  "forms": {
+    "ipAddress": {
+      "title": "IP Address",
+      "description": "Enter the instance IP",
+      "on_error": "The IP Address is not valid."
+    },
+    "port": {
+      "title": "Port",
+      "description": "Enter the instance Port",
+      "on_error": "The Port must not exceed 65.535."
+    },
+    "submitted": "The form has been submitted.",
+    "success": "Success"
+  }
+}
