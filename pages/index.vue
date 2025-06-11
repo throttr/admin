@@ -20,6 +20,8 @@ const state = reactive({
 
 const toast = useToast()
 
+const servers = useServers()
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   toast.add({title: t('forms.success'), description: t('forms.submitted'), color: 'success'})
   console.log(event.data)
