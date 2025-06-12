@@ -22,6 +22,9 @@ export default defineNuxtConfig({
             }
         ],
         defaultLocale: 'en',
+        bundle: {
+            optimizeTranslationDirective: false,
+        }
     },
     pinia: {
         storesDirs: ['./stores/**'],
