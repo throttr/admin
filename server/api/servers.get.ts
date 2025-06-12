@@ -14,7 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import { getServers } from '~/server/throttr/instances'
-import { Service } from '@throttr/sdk/dist/src'
+import { Service } from '@throttr/sdk'
 
 export default defineEventHandler(async (event) => {
     const servers = getServers().map((server: Service, index) => {

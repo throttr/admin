@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import { Service } from '@throttr/sdk/dist/src';
+import { Service } from '@throttr/sdk';
 
 const servers: Service[] = [];
 
@@ -21,6 +21,6 @@ export function addServer(server: Service) {
     servers.push(server);
 }
 
-export function getServers(): Instance[] {
+export function getServers(): Service[] {
     return servers
 }

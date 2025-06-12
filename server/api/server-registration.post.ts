@@ -14,7 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import { addServer } from '~/server/throttr/instances'
-import { Service, ValueSize } from '@throttr/sdk/dist/src'
+import { Service, ValueSize } from '@throttr/sdk'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)

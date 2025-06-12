@@ -2144,10 +2144,10 @@
   dependencies:
     "@tanstack/virtual-core" "3.13.10"
 
-"@throttr/sdk@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@throttr/sdk/-/sdk-5.0.0.tgz#9cafe93085c593be6fb05fb6094d973f977ab3fb"
-  integrity sha512-Oadg6k+JvFYpiDPvEzG7xQ2NDwyEEQaWwHOuAXPT8+pCUZwGCBT9UbXGsB4udIMs36Gz5CCyM+7PmkAFSbuqNQ==
+"@throttr/sdk@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@throttr/sdk/-/sdk-5.1.0.tgz#671d1e4aeb3e2b25a73dd1fe76c76a58633b91be"
+  integrity sha512-npAQHPjYXSQ1sMi9ZOHwPTpvmxQaGirVkeUfiV77hTYNgzICBOcJ+hTAnoDW1QWVRLY9R53Al4sRR1J5NUin6Q==
 
 "@trysound/sax@0.2.0":
   version "0.2.0"
