@@ -1,4 +1,3 @@
-<script setup lang="ts">
 // Copyright (C) 2025 Ian Torres
 //
 // This program is free software: you can redistribute it and/or modify
@@ -13,9 +12,15 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
-</script>
 
-<template>
-  <slot />
-</template>
+import { Service } from '@throttr/sdk/dist/src';
 
+const servers: Service[] = [];
+
+export function addServer(server: Service) {
+    servers.push(server);
+}
+
+export function getServers(): Instance[] {
+    return servers
+}

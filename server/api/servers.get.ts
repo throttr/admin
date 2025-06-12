@@ -1,4 +1,3 @@
-<script setup lang="ts">
 // Copyright (C) 2025 Ian Torres
 //
 // This program is free software: you can redistribute it and/or modify
@@ -13,9 +12,19 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
-</script>
 
-<template>
-  <slot />
-</template>
+import { getServers } from '~/server/throttr/instances'
+import { Service } from '@throttr/sdk/dist/src'
 
+export default defineEventHandler(async (event) => {
+    const servers = getServers().map((server: Service, index) => {
+        return {
+            id: index,
+        }
+    })
+
+    return {
+        success: true,
+        data: servers
+    }
+})
