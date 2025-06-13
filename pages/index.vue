@@ -17,7 +17,7 @@
 import * as z from 'zod'
 import type {FormSubmitEvent} from '@nuxt/ui'
 
-const open = ref(true)
+const open = ref(false)
 
 const {t} = useI18n()
 
@@ -60,14 +60,22 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       port: event.data.port,
       value_type: event.data.value_type,
       connections: event.data.connections
-    } as ServiceRegistrationRequest
+    }
   } as any)
 
   await services.retrieve();
+
+  if (services.services.length === 0) {
+    open.value = false;
+  }
 }
 
 onMounted(async () => {
   await services.retrieve();
+
+  if (services.services.length === 0) {
+    open.value = true;
+  }
 })
 </script>
 
@@ -77,8 +85,6 @@ onMounted(async () => {
           :description="t('welcome.modal.description')"
           :dismissible="false"
           :close="false">
-    <UButton label="Open" color="neutral" variant="subtle"/>
-
     <template #body>
 
       <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
@@ -102,4 +108,7 @@ onMounted(async () => {
       </UForm>
     </template>
   </UModal>
+  <div>
+    <ServicesTable />
+  </div>
 </template>

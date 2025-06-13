@@ -14,16 +14,35 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import { defineStore } from 'pinia'
+import type {Configuration} from "@throttr/sdk";
+import type {AddressInfo} from "net";
+
+export interface StoredConnection {
+    id: number;
+    connected: boolean;
+    address: AddressInfo
+}
+
+export interface StoredInstance {
+    config: Configuration;
+    connected: boolean;
+    connections: StoredConnection[];
+}
+
+export interface StoredService {
+    id: string;
+    instance: StoredInstance;
+}
 
 export const useServices = defineStore('services', () => {
-    const services = ref([]);
+    const services : Ref<StoredService[]> = ref([]);
 
     const retrieve = async () => {
         const { data } = await $fetch('/api/services', {
             method: 'GET',
         } as any)
 
-        services.value = data;
+        services.value = data as StoredService[];
     }
 
     return {
