@@ -15,10 +15,19 @@
 
 import { defineStore } from 'pinia'
 
-export const useServers = defineStore('servers', () => {
-    const servers = ref([]);
+export const useServices = defineStore('services', () => {
+    const services = ref([]);
+
+    const retrieve = async () => {
+        const { data } = await $fetch('/api/services', {
+            method: 'GET',
+        } as any)
+
+        services.value = data;
+    }
 
     return {
-        servers,
+        services,
+        retrieve,
     }
 })

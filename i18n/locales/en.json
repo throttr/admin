@@ -18,7 +18,11 @@
     },
     "valueType": {
       "title": "Value Type",
-      "description": "Enter the instance Value Type"
+      "description": "Enter the instance Value Type."
+    },
+    "connections": {
+      "title": "Connections",
+      "description": "Enter the number of connections."
     },
     "add": "Add",
     "addServer": "Add Server",

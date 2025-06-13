@@ -14,46 +14,61 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import * as v from 'valibot'
+import * as z from 'zod'
 import type {FormSubmitEvent} from '@nuxt/ui'
 
 const open = ref(true)
 
 const {t} = useI18n()
 
-const schema = v.object({
-  ipAddress: v.pipe(v.string(), v.ip(t('forms.ipAddress.on_error'))),
-  port: v.pipe(v.number(), v.maxValue(65535, t('forms.port.on_error')))
-})
-
-type Schema = v.InferOutput<typeof schema>
-
-const state = reactive({
-  ipAddress: '127.0.0.1',
-  valueType: 'UINT16',
-  port: 9000
-})
-
 const valueTypes = ref(['UINT8', 'UINT16', 'UINT32', 'UINT64'])
+
+const schema = z.object({
+  ip_address: z.string().ip({ version: "v4", message: t('forms.ipAddress.on_error') }),
+  value_type: z.enum(valueTypes.value),
+  port: z.number().max(65535, t('forms.port.on_error')),
+  connections: z.number().min(1),
+})
+
+type Schema = z.output<typeof schema>
+
+const state = reactive<Partial<Schema>>({
+  ip_address: '127.0.0.1',
+  value_type: 'UINT16',
+  port: 9000,
+  connections: 1,
+})
 
 const toast = useToast()
 
-const servers = useServers()
+const services = useServices()
+
+interface ServiceRegistrationRequest {
+  ip: string
+  port: number
+  value_type: string
+  connections: string
+}
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   toast.add({title: t('forms.success'), description: t('forms.submitted'), color: 'success'})
-  console.log(event.data)
 
-  const { data, error } = await $fetch('/api/server-registration', {
+  const { data, error } = await $fetch('/api/service-registration', {
     method: 'POST',
     body: {
-      ip: event.data.ipAddress,
+      ip: event.data.ip_address,
       port: event.data.port,
-      value_type: event.data.valueType
-    }
-  })
+      value_type: event.data.value_type,
+      connections: event.data.connections
+    } as ServiceRegistrationRequest
+  } as any)
 
+  await services.retrieve();
 }
+
+onMounted(async () => {
+  await services.retrieve();
+})
 </script>
 
 <template>
@@ -68,7 +83,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
       <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
         <UFormField :label="t('forms.ipAddress.title')" name="ipAddress">
-          <UInput :placeholder="t('forms.ipAddress.description')" v-model="state.ipAddress" type="text" class="w-full" />
+          <UInput :placeholder="t('forms.ipAddress.description')" v-model="state.ip_address" type="text" class="w-full" />
         </UFormField>
 
         <UFormField :label="t('forms.port.title')" name="port">
@@ -76,7 +91,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </UFormField>
 
         <UFormField :label="t('forms.valueType.title')" name="valueType">
-          <USelect v-model="state.valueType" :items="valueTypes" class="w-full" />
+          <USelect v-model="state.value_type" :items="valueTypes" class="w-full" />
+        </UFormField>
+
+        <UFormField :label="t('forms.connections.title')" name="connections">
+          <UInput :placeholder="t('forms.connections.description')" v-model="state.connections" type="number" class="w-full" />
         </UFormField>
 
         <UButton :label="t('forms.connect')" type="submit"/>

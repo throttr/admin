@@ -13,15 +13,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import { addServer } from '~/server/throttr/instances'
+import { addService } from '~/server/throttr/instances'
 import { Service, ValueSize } from '@throttr/sdk'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
 
-    const { ip, port, value_type } = body
+    const { ip, port, value_type, connections } = body
 
-    if (!ip || !port || !value_type) {
+    if (!ip || !port || !value_type || !connections) {
         throw createError({ statusCode: 400, statusMessage: 'Missing parameters' })
     }
 
@@ -47,10 +47,11 @@ export default defineEventHandler(async (event) => {
             host: ip,
             port: port,
             value_size: server_value_type,
+            max_connections: connections,
         })
 
         await instance.connect()
-        addServer(instance)
+        addService(instance)
         return { success: true }
     } catch (err) {
         console.error('Connection failed:', err)

@@ -13,13 +13,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import { getServers } from '~/server/throttr/instances'
-import { Service } from '@throttr/sdk'
+import { getServices, ServiceWrapper } from '~/server/throttr/instances'
+import { Connection } from '@throttr/sdk'
 
 export default defineEventHandler(async (event) => {
-    const servers = getServers().map((server: Service, index) => {
+    const servers = getServices().map((service: ServiceWrapper, index) => {
         return {
-            id: index,
+            id: service.id,
+            instance: {
+                config: service.instance.config,
+                connected: !service.instance.connections.some((connection: Connection) => {
+                    return !connection.isAlive();
+                }),
+                connections: service.instance.connections.map((connection: Connection, connection_index: number) => {
+                    return {
+                        id: connection_index,
+                        connected: connection.isAlive(),
+                        address: connection.socket.address(),
+                    }
+                }),
+            }
         }
     })
 
