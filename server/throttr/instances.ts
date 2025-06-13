@@ -14,13 +14,22 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import { Service } from '@throttr/sdk';
+import { v4 as uuid } from 'uuid';
 
-const servers: Service[] = [];
-
-export function addServer(server: Service) {
-    servers.push(server);
+export interface ServiceWrapper {
+    id: string;
+    instance: Service;
 }
 
-export function getServers(): Service[] {
-    return servers
+const services: ServiceWrapper[] = [];
+
+export function addService(instance: Service) {
+    services.push({
+        id: uuid(),
+        instance: instance,
+    });
+}
+
+export function getServices(): ServiceWrapper[] {
+    return services;
 }
