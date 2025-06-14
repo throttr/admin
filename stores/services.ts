@@ -22,6 +22,8 @@ import type { TableColumn } from '@nuxt/ui'
 import { ValueSize } from "@throttr/sdk"
 import { h } from 'vue'
 import UBadge from '@nuxt/ui/components/Badge.vue'
+import UButton from '@nuxt/ui/components/Button.vue'
+import UDropdownMenu from '@nuxt/ui/components/DropdownMenu.vue'
 
 export interface StoredConnection {
     id: number;
@@ -120,6 +122,42 @@ export const useServices = defineStore('services', () => {
                         return "UINT64";
                 }
             },
+        },
+        {
+            id: 'actions',
+            enableHiding: false,
+            cell: ({ row }) => {
+                const items = [{
+                    type: 'label',
+                    label: 'Actions'
+                }, {
+                    label: 'View'
+                }, {
+                    label: row.original.instance.connected ? 'Disconnect' : 'Connect',
+                }, {
+                    type: 'separator'
+                }, {
+                    label: '« Open in Terminal »'
+                }, {
+                    type: 'separator'
+                }, {
+                    label: 'Remove'
+                }]
+
+                return h('div', { class: 'text-right' }, h(UDropdownMenu, {
+                    'content': {
+                        align: 'end'
+                    },
+                    items,
+                    'aria-label': 'Actions dropdown'
+                }, () => h(UButton, {
+                    'icon': 'i-lucide-ellipsis-vertical',
+                    'color': 'neutral',
+                    'variant': 'ghost',
+                    'class': 'ml-auto',
+                    'aria-label': 'Actions dropdown'
+                })))
+            }
         }
     ]
 
