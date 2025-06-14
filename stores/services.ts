@@ -16,6 +16,12 @@
 import { defineStore } from 'pinia'
 import type {Configuration} from "@throttr/sdk";
 import type {AddressInfo} from "net";
+import * as z from "zod";
+import type {FormSubmitEvent} from "@nuxt/ui";
+import type { TableColumn } from '@nuxt/ui'
+import { ValueSize } from "@throttr/sdk"
+import { h } from 'vue'
+import UBadge from '@nuxt/ui/components/Badge.vue'
 
 export interface StoredConnection {
     id: number;
@@ -34,19 +40,125 @@ export interface StoredService {
     instance: StoredInstance;
 }
 
+export interface ServicesAttributes {
+    formOpen: boolean
+    value_sizes: string[]
+}
+
 export const useServices = defineStore('services', () => {
+    const {t} = useI18n()
+    const toast = useToast()
+
     const services : Ref<StoredService[]> = ref([]);
 
-    const retrieve = async () => {
-        const { data } = await $fetch('/api/services', {
-            method: 'GET',
+    const attributes : Ref<ServicesAttributes> = ref({
+        formOpen: false,
+        value_sizes: ['UINT8', 'UINT16', 'UINT32', 'UINT64']
+    })
+
+    const schema = z.object({
+        ip_address: z.string().ip({ version: "v4", message: t('forms.ip_address.on_error') }),
+        value_size: z.enum(attributes.value.value_sizes),
+        port: z.number().max(65535, t('forms.port.on_error')),
+        connections: z.number().min(1),
+    })
+
+    type Schema = z.output<typeof schema>
+
+    const state = reactive<Partial<Schema>>({
+        ip_address: '127.0.0.1',
+        value_size: 'UINT16',
+        port: 9000,
+        connections: 1,
+    })
+
+    const columns: TableColumn<StoredService>[] = [
+        {
+            accessorKey: 'id',
+            header: 'ID',
+            cell: ({ row }) => `${row.original.id.substring(0, 6)}`,
+        },
+        {
+            accessorKey: 'host',
+            header: 'Host',
+            cell: ({ row }) => `${row.original.instance.config.host}`,
+        },
+        {
+            accessorKey: 'port',
+            header: 'Port',
+            cell: ({ row }) => `${row.original.instance.config.port}`,
+        },
+        {
+            accessorKey: 'status',
+            header: 'Status',
+            cell: ({ row }) => {
+                const isConnected = row.original.instance.connected;
+                const color = isConnected ? 'success' : 'error';
+                return h(UBadge, { class: 'capitalize', variant: 'subtle', color }, () =>
+                    isConnected ? 'Connected' : 'Disconnected'
+                )
+            }
+        },
+        {
+            accessorKey: 'connections',
+            header: 'Connections',
+            cell: ({ row }) => `${row.original.instance.config.max_connections}`,
+        },
+        {
+            accessorKey: 'value_size',
+            header: 'Value Size',
+            cell: ({ row }) => {
+                switch (row.original.instance.config.value_size) {
+                    case ValueSize.UInt8:
+                        return "UINT8";
+                    case ValueSize.UInt16:
+                        return "UINT16";
+                    case ValueSize.UInt32:
+                        return "UINT32";
+                    case ValueSize.UInt64:
+                        return "UINT64";
+                }
+            },
+        }
+    ]
+
+    const submit = async (event: FormSubmitEvent<Schema>) => {
+        toast.add({title: t('forms.success'), description: t('forms.submitted'), color: 'success'})
+
+        const response = await $fetch('/api/service-registration', {
+            method: 'POST',
+            body: {
+                ip: event.data.ip_address,
+                port: event.data.port,
+                value_size: event.data.value_size,
+                connections: event.data.connections
+            }
         } as any)
 
-        services.value = data as StoredService[];
+        console.log("Stores :: Services.ts :: Submit :: POST /api/service-registration :: Response", response)
+
+        await setup();
+    }
+
+    const setup = async () => {
+        const response = await $fetch('/api/services', {
+            method: 'GET',
+        })
+
+        console.log("Stores :: Services.ts :: Submit :: GET /api/services :: Response", response)
+
+        services.value = response.data as StoredService[];
+
+        attributes.value.formOpen = services.value.length === 0;
     }
 
     return {
+        state,
+        schema,
+        attributes,
+        columns,
         services,
-        retrieve,
+        setup,
+        submit,
     }
 })
