@@ -58,6 +58,7 @@ export const useServices = defineStore('services', () => {
 
     const schema = z.object({
         ip_address: z.string().ip({ version: "v4", message: t('forms.ip_address.on_error') }),
+        // @ts-ignore: This is-as documentation said.
         value_size: z.enum(attributes.value.value_sizes),
         port: z.number().max(65535, t('forms.port.on_error')),
         connections: z.number().min(1),
@@ -123,33 +124,46 @@ export const useServices = defineStore('services', () => {
     ]
 
     const submit = async (event: FormSubmitEvent<Schema>) => {
-        toast.add({title: t('forms.success'), description: t('forms.submitted'), color: 'success'})
+        try {
+            const response = await $fetch('/api/service-registration', {
+                method: 'POST',
+                body: {
+                    ip: event.data.ip_address,
+                    port: event.data.port,
+                    value_size: event.data.value_size,
+                    connections: event.data.connections
+                }
+            })
 
-        const response = await $fetch('/api/service-registration', {
-            method: 'POST',
-            body: {
-                ip: event.data.ip_address,
-                port: event.data.port,
-                value_size: event.data.value_size,
-                connections: event.data.connections
-            }
-        } as any)
+            toast.add({title: t('forms.event', { name: "Service Registered"}), color: 'success'})
+            console.log("Service Registered ⤑ Response", response)
 
-        console.log("Stores :: Services.ts :: Submit :: POST /api/service-registration :: Response", response)
+            await setup();
+        } catch (error) {
+            toast.add({title: t('forms.event', { name: "Service Registered ⤑ Exception"}), color: 'error'})
+            console.error("Service Registered ⤑ Exception", error)
 
-        await setup();
+            throw error;
+        }
     }
 
     const setup = async () => {
-        const response = await $fetch('/api/services', {
-            method: 'GET',
-        })
+        try {
+            const response = await $fetch('/api/services', {
+                method: 'GET',
+            })
 
-        console.log("Stores :: Services.ts :: Submit :: GET /api/services :: Response", response)
+            toast.add({title: t('forms.invoked', { name: "Fetch Registered Services"}), color: 'success'})
+            console.log("Fetch Registered Services ⤑ Response", response)
 
-        services.value = response.data as StoredService[];
+            services.value = response.data as StoredService[];
+            attributes.value.formOpen = services.value.length === 0;
+        } catch (error) {
+            toast.add({title: t('forms.exception', { name: "Fetch Registered Services"}), color: 'error'})
+            console.error("Fetch Registered Services ⤑ Exception", error)
 
-        attributes.value.formOpen = services.value.length === 0;
+            throw error;
+        }
     }
 
     return {

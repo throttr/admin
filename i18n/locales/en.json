@@ -27,7 +27,16 @@
     "add": "Add",
     "add_server": "Add Server",
     "connect": "Connect",
-    "submitted": "The form has been submitted.",
-    "success": "Success"
+    "services": {
+      "created": "The service has been created."
+    },
+    "processed": "The request has been processed.",
+    "retrieved": "The services has been retrieved.",
+    "failed": "The request has been failed.",
+    "something_went_wrong": "Something went wrong.",
+    "success": "Success",
+    "event": "Event ⤑ {name}",
+    "invoked": "Invoked ⇴ {name}",
+    "exception": "Exception ⚠ {name}"
   }
 }
