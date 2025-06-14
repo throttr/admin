@@ -146,6 +146,7 @@ export const useServices = defineStore('services', () => {
                     label: 'Remove'
                 }]
 
+                // @ts-ignore Dropdown is-as-is.
                 return h('div', { class: 'text-right' }, h(UDropdownMenu, {
                     'content': {
                         align: 'end'
