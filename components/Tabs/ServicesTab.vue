@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 // Copyright (C) 2025 Ian Torres
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,12 +14,44 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+import type { TabsItem } from '@nuxt/ui'
+
 const route = useRoute()
 
-onMounted(() => {
-  navigateTo(`/services/${route.params.id}/overview`)
+const active = computed({
+  get() {
+    return (route.params.tab as string) || '/'
+  },
+  set(tab: any) {
+    // Hash is specified here to prevent the page from scrolling to the top
+    navigateTo(`/services/${route.params.id}/${tab}`)
+    items.value.forEach((item) => {
+      item.active = tab === item.value;
+    })
+  }
 })
+
+const items = ref<TabsItem[]>([
+  {
+    label: 'Overview',
+    value: 'overview',
+    active: true,
+  },
+  {
+    label: 'Connections',
+    value: 'connections',
+    active: false,
+  }
+])
 </script>
 
 <template>
+  <UTabs v-model="active" size="xl" variant="pill" :content="false" :items="items" class="w-full" />
+
+
+
 </template>
+
+<style scoped>
+
+</style>

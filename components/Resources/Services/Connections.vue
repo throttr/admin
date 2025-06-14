@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 // Copyright (C) 2025 Ian Torres
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,12 +14,44 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-const route = useRoute()
+import type {ConnectionsResponse, ConnectionsItem} from "@throttr/sdk";
 
-onMounted(() => {
-  navigateTo(`/services/${route.params.id}/overview`)
+const route = useRoute()
+const services = useServices()
+
+
+const data = ref({
+  success: false,
+  connections: [] as ConnectionsItem[]
+});
+
+const loading = ref(true);
+
+
+const fetch = async () => {
+  loading.value = true;
+  data.value = await services.connections(route.params.id) as ConnectionsResponse;
+  console.log(data.value)
+  loading.value = false;
+}
+
+onMounted(async () => {
+  await fetch()
 })
 </script>
 
 <template>
+  <div>
+    <div class="mb-10">
+      <UButton type="button" @click="fetch">Reload</UButton>
+    </div>
+
+    <div v-if="!loading">
+      <TablesConnectionsTable :connections="data.connections"/>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+
+</style>
