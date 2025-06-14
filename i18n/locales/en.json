@@ -6,7 +6,7 @@
     }
   },
   "forms": {
-    "ipAddress": {
+    "ip_address": {
       "title": "IP Address",
       "description": "Enter the instance IP",
       "on_error": "The IP Address is not valid."
@@ -16,18 +16,27 @@
       "description": "Enter the instance Port",
       "on_error": "The Port must not exceed 65.535."
     },
-    "valueType": {
-      "title": "Value Type",
-      "description": "Enter the instance Value Type."
+    "value_size": {
+      "title": "Value Size",
+      "description": "Enter the instance Value Size."
     },
     "connections": {
       "title": "Connections",
       "description": "Enter the number of connections."
     },
     "add": "Add",
-    "addServer": "Add Server",
+    "add_server": "Add Server",
     "connect": "Connect",
-    "submitted": "The form has been submitted.",
-    "success": "Success"
+    "services": {
+      "created": "The service has been created."
+    },
+    "processed": "The request has been processed.",
+    "retrieved": "The services has been retrieved.",
+    "failed": "The request has been failed.",
+    "something_went_wrong": "Something went wrong.",
+    "success": "Success",
+    "event": "Event ⤑ {name}",
+    "invoked": "Invoked ⇴ {name}",
+    "exception": "Exception ⚠ {name}"
   }
 }

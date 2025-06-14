@@ -15,25 +15,13 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 const {t} = useI18n()
-
-const services = useServices()
-
-onMounted(async () => {
-  await services.setup();
-})
+const services = useServices();
 </script>
 
 <template>
-  <UModal v-model:open="services.attributes.formOpen"
-          :title="t('welcome.modal.title')"
-          :description="t('welcome.modal.description')"
-          :dismissible="false"
-          :close="false">
-    <template #body>
-      <FormsServicesForm/>
-    </template>
-  </UModal>
+
   <div>
-    <TablesServicesTable />
+    <UButton :label="t('forms.add_server')" type="button" @click="services.attributes.formOpen = true"/>
   </div>
+  <UTable :data="services.services" :columns="services.columns" class="flex-1" />
 </template>

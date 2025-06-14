@@ -19,26 +19,26 @@ import { Service, ValueSize } from '@throttr/sdk'
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
 
-    const { ip, port, value_type, connections } = body
+    const { ip, port, value_size, connections } = body
 
-    if (!ip || !port || !value_type || !connections) {
+    if (!ip || !port || !value_size || !connections) {
         throw createError({ statusCode: 400, statusMessage: 'Missing parameters' })
     }
 
-    let server_value_type = ValueSize.UInt16;
+    let server_value_size = ValueSize.UInt16;
 
-    switch (value_type) {
+    switch (value_size) {
         case 'UINT8':
-            server_value_type = ValueSize.UInt8;
+            server_value_size = ValueSize.UInt8;
             break;
         case 'UINT16':
-            server_value_type = ValueSize.UInt16;
+            server_value_size = ValueSize.UInt16;
             break;
         case 'UINT32':
-            server_value_type = ValueSize.UInt32;
+            server_value_size = ValueSize.UInt32;
             break;
         case 'UINT64':
-            server_value_type = ValueSize.UInt64;
+            server_value_size = ValueSize.UInt64;
             break;
     }
 
@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
         const instance = new Service({
             host: ip,
             port: port,
-            value_size: server_value_type,
+            value_size: server_value_size,
             max_connections: connections,
         })
 
