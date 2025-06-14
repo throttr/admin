@@ -14,7 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import { defineStore } from 'pinia'
-import type {Configuration} from "@throttr/sdk";
+import type {Configuration, InfoResponse} from "@throttr/sdk";
 import type {AddressInfo} from "net";
 import * as z from "zod";
 import type {FormSubmitEvent} from "@nuxt/ui";
@@ -50,7 +50,6 @@ export interface ServicesAttributes {
 export const useServices = defineStore('services', () => {
     const {t} = useI18n()
     const toast = useToast()
-
     const services : Ref<StoredService[]> = ref([]);
 
     const attributes : Ref<ServicesAttributes> = ref({
@@ -131,7 +130,10 @@ export const useServices = defineStore('services', () => {
                     type: 'label',
                     label: 'Actions'
                 }, {
-                    label: 'View'
+                    label: 'View',
+                    onSelect: () => {
+                        navigateTo(`/services/${row.original.id}`)
+                    }
                 }, {
                     label: row.original.instance.connected ? 'Disconnect' : 'Connect',
                 }, {
@@ -144,6 +146,7 @@ export const useServices = defineStore('services', () => {
                     label: 'Remove'
                 }]
 
+                // @ts-ignore Dropdown is-as-is.
                 return h('div', { class: 'text-right' }, h(UDropdownMenu, {
                     'content': {
                         align: 'end'
@@ -185,6 +188,14 @@ export const useServices = defineStore('services', () => {
         }
     }
 
+    const info = async (id: any) => {
+        const response = await $fetch(`/api/services/${id}/info`, {
+            method: 'GET',
+        });
+
+        return response.data as InfoResponse
+    }
+
     const setup = async () => {
         try {
             const response = await $fetch('/api/services', {
@@ -210,6 +221,7 @@ export const useServices = defineStore('services', () => {
         attributes,
         columns,
         services,
+        info,
         setup,
         submit,
     }
