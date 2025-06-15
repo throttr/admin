@@ -15,7 +15,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import type {TableColumn} from '@nuxt/ui'
-import {KeyType, type ListItem, TTLType} from '@throttr/sdk';
+import {type GetResponse, KeyType, type ListItem, type QueryResponse, TTLType} from '@throttr/sdk';
 import {formatDate} from '~/server/throttr/utils';
 import UButton from '@nuxt/ui/components/Button.vue';
 import UDropdownMenu from '@nuxt/ui/components/DropdownMenu.vue';
@@ -25,6 +25,9 @@ const toast = useToast()
 const services = useServices()
 const route = useRoute()
 const emit = defineEmits(['reload'])
+
+const get: Ref<GetResponse> = ref({} as GetResponse);
+const query: Ref<QueryResponse> = ref({} as QueryResponse);
 
 const get_ttl_type = (ttl_type: TTLType) => {
   switch (ttl_type) {
@@ -47,32 +50,44 @@ const columns: TableColumn<ListItem>[] = [
   {
     accessorKey: 'name',
     header: 'Name',
-    cell: ({ row }) => row.original.key,
+    cell: ({row}) => row.original.key,
   },
   {
     accessorKey: 'kind',
     header: 'Kind',
-    cell: ({ row }) => row.original.key_type == KeyType.Counter ? `Counter` : `Buffer`,
+    cell: ({row}) => row.original.key_type == KeyType.Counter ? `Counter` : `Buffer`,
   },
   {
     accessorKey: 'ttl_type',
     header: 'TTL Type',
-    cell: ({ row }) => get_ttl_type(row.original.ttl_type),
+    cell: ({row}) => get_ttl_type(row.original.ttl_type),
   },
   {
     accessorKey: 'expires_at',
     header: 'Expires At',
-    cell: ({ row }) => formatDate(row.original.expires_at, true),
+    cell: ({row}) => formatDate(row.original.expires_at, true),
   },
   {
     id: 'actions',
     enableHiding: false,
-    cell: ({ row }) => {
+    cell: ({row}) => {
       const items = [{
         type: 'label',
         label: 'Actions'
       }, {
-        label: 'View'
+        label: 'View',
+        async onSelect() {
+          switch (row.original.key_type) {
+            case KeyType.Buffer:
+              get.value = await services.get(route.params.id, row.original.key);
+              open_get.value = true;
+              break;
+            case KeyType.Counter:
+              query.value = await services.query(route.params.id, row.original.key);
+              open_query.value = true;
+              break;
+          }
+        }
       }, {
         type: 'separator'
       }, {
@@ -83,7 +98,7 @@ const columns: TableColumn<ListItem>[] = [
         }
       }]
 
-      return h('div', { class: 'text-right' }, h(UDropdownMenu, {
+      return h('div', {class: 'text-right'}, h(UDropdownMenu, {
         'content': {
           align: 'end'
         },
@@ -102,8 +117,45 @@ const columns: TableColumn<ListItem>[] = [
 
 const props = defineProps(['keys'])
 
+const open_get = ref(false);
+const open_query = ref(false);
+
 </script>
 
 <template>
-  <UTable :data="props.keys" :columns="columns" class="w-full" />
+  <UModal v-model:open="open_get"
+          title="View Buffer"
+          :dismissible="true"
+          :close="true">
+    <template #body>
+      <h1 class="text-lg">TTL</h1>
+      <div class="p-4">
+        {{ get.ttl }} {{ get_ttl_type(get.ttl_type) }}
+      </div>
+      <div class="pt-2 rounded">
+        <h3 class="text-lg">Value</h3>
+
+        <pre class="p-4 overflow-auto">{{ get.value }}</pre>
+      </div>
+    </template>
+  </UModal>
+  <UModal v-model:open="open_query"
+          title="View Counter"
+          :dismissible="true"
+          :close="true">
+    <template #body>
+      <h3 class="text-lg">TTL</h3>
+      <div class="p-4">
+        {{ query.ttl }} {{ get_ttl_type(query.ttl_type) }}
+      </div>
+      <div class="pt-2 rounded">
+        <h3 class="text-lg">Quota</h3>
+
+        <div class="p-4">
+          {{ query.quota }}
+        </div>
+      </div>
+    </template>
+  </UModal>
+  <UTable :data="props.keys" :columns="columns" class="w-full"/>
 </template>
