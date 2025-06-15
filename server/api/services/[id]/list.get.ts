@@ -1,4 +1,3 @@
-<script setup lang="ts">
 // Copyright (C) 2025 Ian Torres
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,12 +13,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-const {t} = useI18n()
+import {getServices, ServiceWrapper} from '~/server/throttr/instances'
+import { RequestType, ListResponse } from '@throttr/sdk'
 
-onMounted(async () => {
-  navigateTo('/services');
+export default defineEventHandler(async (event) => {
+    const services = getServices();
+    const { id } = event.context.params!;
+    const index = services.findIndex((item) => item.id === id);
+    const service : ServiceWrapper = services[index];
+    return (await service.instance.send({
+        type: RequestType.List,
+    })) as ListResponse;
 })
-</script>
-
-<template>
-</template>

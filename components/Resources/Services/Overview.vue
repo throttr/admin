@@ -17,14 +17,14 @@
 import MetricCard from "~/components/Cards/MetricCard.vue";
 import TimedMetricCard from "~/components/Cards/TimedMetricCard.vue";
 import type {InfoResponse} from "@throttr/sdk";
+import { formatDate } from "~/server/throttr/utils";
 
 const route = useRoute()
 const services = useServices()
 
-
-const data = ref({
+const data : Ref<InfoResponse> = ref({
   success: false
-});
+} as InfoResponse);
 
 const sections = [
   { name: 'ALL', totalKey: 'total_requests', perMinuteKey: 'total_requests_per_minute' },
@@ -48,12 +48,6 @@ const sections = [
   { name: 'WHOAMI', totalKey: 'total_whoami_requests', perMinuteKey: 'total_whoami_requests_per_minute' },
 ];
 
-const formatDate = (value: number, isNano: boolean): string => {
-  const ms = isNano ? Math.floor(value / 1e6) : value * 1000;
-  const date = new Date(ms);
-  return date.toLocaleString();
-}
-
 const fetch = async () => {
   data.value = await services.info(route.params.id) as InfoResponse;
 }
@@ -65,13 +59,9 @@ onMounted(async () => {
 
 <template>
   <div>
-    <div class="mb-10">
-      <UButton type="button" @click="fetch">Reload</UButton>
-    </div>
-
     <div v-if="data.success">
       <div class="mb-10">
-        <h1 class="text-5xl">Instance</h1>
+        <h1 class="text-5xl">Overview</h1>
       </div>
 
       <div class="grid grid-cols-4 gap-10 mb-20">

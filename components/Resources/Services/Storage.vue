@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import type {ConnectionsResponse, ConnectionsItem} from "@throttr/sdk";
+import {KeyType, type ListItem, type ListResponse, TTLType} from "@throttr/sdk";
+import { formatDate } from "~/server/throttr/utils";
 
 const route = useRoute()
 const services = useServices()
@@ -22,15 +23,17 @@ const services = useServices()
 
 const data = ref({
   success: false,
-  connections: [] as ConnectionsItem[]
+  keys: [] as ListItem[]
 });
 
 const loading = ref(true);
+const open_insert = ref(false);
+const open_set = ref(false);
 
 
 const fetch = async () => {
   loading.value = true;
-  data.value = await services.connections(route.params.id) as ConnectionsResponse;
+  data.value = await services.list(route.params.id) as ListResponse;
   loading.value = false;
 }
 
@@ -43,11 +46,34 @@ onMounted(async () => {
   <div>
     <div v-if="!loading">
       <div class="mb-10">
-        <h1 class="text-5xl">Connections</h1>
+        <h1 class="text-5xl">Storage</h1>
       </div>
+      <UModal v-model:open="open_insert"
+              title="INSERT"
+              description="Complete the form to create a counter"
+              :dismissible="true"
+              :close="true">
+        <template #body>
+          <FormsInsertForm/>
+        </template>
+      </UModal>
+
+      <UModal v-model:open="open_set"
+              title="SET"
+              description="Complete the form to create a buffer"
+              :dismissible="true"
+              :close="true">
+        <template #body>
+          <FormsSetForm/>
+        </template>
+      </UModal>
 
       <UCard>
-        <TablesConnectionsTable :connections="data.connections"/>
+          <div class="flex gap-x-2">
+            <UButton type="button" @click="open_insert = true">INSERT</UButton>
+            <UButton type="button" @click="open_set = true">SET</UButton>
+          </div>
+          <TablesKeysTable :keys="data.keys"/>
       </UCard>
     </div>
   </div>

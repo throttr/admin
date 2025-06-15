@@ -16,14 +16,9 @@
 
 import type { TableColumn } from '@nuxt/ui'
 import type { ConnectionsItem } from '@throttr/sdk';
+import { formatDate } from '~/server/throttr/utils';
 
 const {t} = useI18n()
-
-const formatDate = (value: number, isNano: boolean): string => {
-  const ms = isNano ? Math.floor(value / 1e6) : value * 1000;
-  const date = new Date(ms);
-  return date.toLocaleString();
-}
 
 const columns: TableColumn<ConnectionsItem>[] = [
   {
@@ -50,9 +45,6 @@ const columns: TableColumn<ConnectionsItem>[] = [
 
 const props = defineProps(['connections'])
 
-onMounted(() => {
-  console.log(props);
-})
 </script>
 
 <template>

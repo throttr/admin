@@ -38,6 +38,11 @@ const items = ref<TabsItem[]>([
     active: true,
   },
   {
+    label: 'Storage',
+    value: 'storage',
+    active: false,
+  },
+  {
     label: 'Connections',
     value: 'connections',
     active: false,
@@ -47,9 +52,6 @@ const items = ref<TabsItem[]>([
 
 <template>
   <UTabs v-model="active" size="xl" variant="pill" :content="false" :items="items" class="w-full" />
-
-
-
 </template>
 
 <style scoped>
