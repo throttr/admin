@@ -18,8 +18,9 @@ import * as z from "zod";
 import { TTLType } from "@throttr/sdk";
 import type {FormSubmitEvent} from "@nuxt/ui";
 
-const services = useServices()
 const {t} = useI18n()
+
+const emit = defineEmits(["success"]);
 
 const ttl_types = ref([
   {
@@ -82,6 +83,8 @@ const submit = async (event: FormSubmitEvent<Schema>) => {
 
     toast.add({title: t('forms.event', { name: "Buffer Created"}), color: 'success'})
     console.log("Buffer Created ⤑ Response", response)
+
+    emit('success');
 
   } catch (error) {
     toast.add({title: t('forms.event', { name: "Buffer Created ⤑ Exception"}), color: 'error'})

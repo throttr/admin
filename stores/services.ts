@@ -14,7 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import { defineStore } from 'pinia'
-import type {Configuration, InfoResponse, ConnectionsResponse, ListResponse} from "@throttr/sdk";
+import type {Configuration, InfoResponse, ConnectionsResponse, ListResponse, StatusResponse} from "@throttr/sdk";
 import type {AddressInfo} from "net";
 import * as z from "zod";
 import type {FormSubmitEvent} from "@nuxt/ui";
@@ -196,6 +196,17 @@ export const useServices = defineStore('services', () => {
         return response.data as InfoResponse
     }
 
+    const purge = async (id: any, key: string) => {
+        const response = await $fetch(`/api/services/${id}/purge`, {
+            method: 'POST',
+            body: {
+                key: key,
+            }
+        });
+
+        return response as StatusResponse;
+    }
+
     const connections = async (id: any) => {
         const response = await $fetch(`/api/services/${id}/connections`, {
             method: 'GET',
@@ -239,6 +250,7 @@ export const useServices = defineStore('services', () => {
         services,
         info,
         list,
+        purge,
         connections,
         setup,
         submit,
