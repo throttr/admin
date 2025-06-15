@@ -20,7 +20,6 @@ import { formatDate } from "~/server/throttr/utils";
 const route = useRoute()
 const services = useServices()
 
-
 const data = ref({
   success: false,
   keys: [] as ListItem[]
@@ -49,31 +48,31 @@ onMounted(async () => {
         <h1 class="text-5xl">Storage</h1>
       </div>
       <UModal v-model:open="open_insert"
-              title="INSERT"
+              title="Add Counter"
               description="Complete the form to create a counter"
               :dismissible="true"
               :close="true">
         <template #body>
-          <FormsInsertForm/>
+          <FormsInsertForm v-on:success="open_insert = false; fetch()"/>
         </template>
       </UModal>
 
       <UModal v-model:open="open_set"
-              title="SET"
+              title="Add Buffer"
               description="Complete the form to create a buffer"
               :dismissible="true"
               :close="true">
         <template #body>
-          <FormsSetForm/>
+          <FormsSetForm v-on:success="open_set = false; fetch()"/>
         </template>
       </UModal>
 
       <UCard>
           <div class="flex gap-x-2">
-            <UButton type="button" @click="open_insert = true">INSERT</UButton>
-            <UButton type="button" @click="open_set = true">SET</UButton>
+            <UButton type="button" @click="open_insert = true">Add Counter</UButton>
+            <UButton type="button" @click="open_set = true">Add Buffer</UButton>
           </div>
-          <TablesKeysTable :keys="data.keys"/>
+          <TablesKeysTable :keys="data.keys" v-on:reload="fetch"/>
       </UCard>
     </div>
   </div>

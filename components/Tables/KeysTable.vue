@@ -15,11 +15,16 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import type {TableColumn} from '@nuxt/ui'
-import {type ListItem, TTLType} from '@throttr/sdk';
-import { KeyType } from '@throttr/sdk';
+import {KeyType, type ListItem, TTLType} from '@throttr/sdk';
 import {formatDate} from '~/server/throttr/utils';
+import UButton from '@nuxt/ui/components/Button.vue';
+import UDropdownMenu from '@nuxt/ui/components/DropdownMenu.vue';
 
 const {t} = useI18n()
+const toast = useToast()
+const services = useServices()
+const route = useRoute()
+const emit = defineEmits(['reload'])
 
 const get_ttl_type = (ttl_type: TTLType) => {
   switch (ttl_type) {
@@ -58,6 +63,40 @@ const columns: TableColumn<ListItem>[] = [
     accessorKey: 'expires_at',
     header: 'Expires At',
     cell: ({ row }) => formatDate(row.original.expires_at, true),
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    cell: ({ row }) => {
+      const items = [{
+        type: 'label',
+        label: 'Actions'
+      }, {
+        label: 'View'
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Remove',
+        async onSelect() {
+          await services.purge(route.params.id, row.original.key);
+          emit('reload');
+        }
+      }]
+
+      return h('div', { class: 'text-right' }, h(UDropdownMenu, {
+        'content': {
+          align: 'end'
+        },
+        items,
+        'aria-label': 'Actions dropdown'
+      }, () => h(UButton, {
+        'icon': 'i-lucide-ellipsis-vertical',
+        'color': 'neutral',
+        'variant': 'ghost',
+        'class': 'ml-auto',
+        'aria-label': 'Actions dropdown'
+      })))
+    }
   }
 ]
 
