@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 // Copyright (C) 2025 Ian Torres
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,9 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import type { BreadcrumbItem } from "@nuxt/ui";
+import type {BreadcrumbItem} from "@nuxt/ui";
 
-const route = useRoute()
+const {t} = useI18n()
+
+const services = useServices()
 
 const items = ref<BreadcrumbItem[]>([
   {
@@ -29,23 +31,10 @@ const items = ref<BreadcrumbItem[]>([
   },
 ])
 
-onMounted(() => {
-  switch (route.params.tab) {
-    case 'overview':
-      items.value.push( {
-        label: 'Overview',
-        to: `/services/${route.params.id}/overview`
-      })
-      break;
-    case 'connections':
-      items.value.push( {
-        label: 'Connections',
-        to: `/services/${route.params.id}/connections`
-      })
-      break;
-  }
-})
 
+onMounted(async () => {
+  await services.setup();
+})
 </script>
 
 <template>
@@ -53,20 +42,19 @@ onMounted(() => {
     <div class="py-10">
       <UBreadcrumb :items="items" />
     </div>
-
-    <TabsServicesTab class="mb-10" />
-
-    <div v-if="route.params.tab === 'overview'">
-      <ResourcesServicesOverview />
+    <UModal v-model:open="services.attributes.formOpen"
+            :title="t('welcome.modal.title')"
+            :description="t('welcome.modal.description')"
+            :dismissible="false"
+            :close="false">
+      <template #body>
+        <FormsServicesForm/>
+      </template>
+    </UModal>
+    <div>
+      <UCard>
+        <TablesServicesTable/>
+      </UCard>
     </div>
-
-    <div v-if="route.params.tab === 'storage'">
-      <ResourcesServicesStorage />
-    </div>
-
-    <div v-if="route.params.tab === 'connections'">
-      <ResourcesServicesConnections />
-    </div>
-
   </div>
 </template>
