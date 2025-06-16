@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
     const { key, ttl_type, ttl, quota } = body
 
-    if (!key || !ttl_type || !ttl || !quota) {
+    if (!key || !ttl_type || !ttl) {
         throw createError({ statusCode: 400, statusMessage: 'Missing parameters' })
     }
     const { id } = event.context.params!;

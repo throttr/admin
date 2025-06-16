@@ -46,6 +46,25 @@ const get_ttl_type = (ttl_type: TTLType) => {
   }
 }
 
+const is_json = (input: string) => {
+  try {
+    JSON.parse(input);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+const copy = (input: string) => {
+  navigator.clipboard.writeText(input)
+  toast.add({title: t('forms.event', { name: "Value Copied"}), color: 'success'})
+}
+
+const transform_to_json = (value: string) => {
+  const parsed = JSON.parse(value);
+  return JSON.stringify(parsed, null, "  ");
+}
+
 const columns: TableColumn<ListItem>[] = [
   {
     accessorKey: 'name',
@@ -80,6 +99,10 @@ const columns: TableColumn<ListItem>[] = [
           switch (row.original.key_type) {
             case KeyType.Buffer:
               get.value = await services.get(route.params.id, row.original.key);
+              const has_json = is_json(get.value.value);
+              if (has_json) {
+                get.value.value = transform_to_json(get.value.value);
+              }
               open_get.value = true;
               break;
             case KeyType.Counter:
@@ -133,9 +156,16 @@ const open_query = ref(false);
         {{ get.ttl }} {{ get_ttl_type(get.ttl_type) }}
       </div>
       <div class="pt-2 rounded">
-        <h3 class="text-lg">Value</h3>
+        <div class="flex justify-between">
+          <h3 class="text-lg">Value</h3>
+          <div class="w-1/2 text-right">
+            <UBadge size="md" icon="i-lucide-clipboard-copy" color="primary" variant="solid" class="mr-2 cursor-pointer" @click="copy(get.value)">Copy</UBadge>
+            <UBadge v-if="is_json(get.value)" size="md" icon="i-lucide-file-json-2" color="primary" variant="solid">JSON</UBadge>
+            <UBadge v-else size="md" icon="i-lucide-binary" color="primary" variant="solid">Raw</UBadge>
+          </div>
+        </div>
 
-        <pre class="p-4 overflow-auto">{{ get.value }}</pre>
+        <pre class="mt-5 p-4 overflow-auto rounded border border-gray-700">{{ get.value }}</pre>
       </div>
     </template>
   </UModal>
