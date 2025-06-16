@@ -32,17 +32,17 @@ const query: Ref<QueryResponse> = ref({} as QueryResponse);
 const get_ttl_type = (ttl_type: TTLType) => {
   switch (ttl_type) {
     case TTLType.Nanoseconds:
-      return "Nanoseconds";
+      return "nanoseconds";
     case TTLType.Microseconds:
-      return "Microseconds";
+      return "microseconds";
     case TTLType.Milliseconds:
-      return "Milliseconds";
+      return "milliseconds";
     case TTLType.Seconds:
-      return "Seconds";
+      return "seconds";
     case TTLType.Minutes:
-      return "Minutes";
+      return "minutes";
     case TTLType.Hours:
-      return "Hours";
+      return "hours";
   }
 }
 
@@ -151,13 +151,13 @@ const open_query = ref(false);
           :dismissible="true"
           :close="true">
     <template #body>
-      <h1 class="text-lg">TTL</h1>
+      <h1 class="text-lg">Expires in</h1>
       <div class="p-4">
         {{ get.ttl }} {{ get_ttl_type(get.ttl_type) }}
       </div>
       <div class="pt-2 rounded">
         <div class="flex justify-between">
-          <h3 class="text-lg">Value</h3>
+          <h3 class="text-lg">Data</h3>
           <div class="w-1/2 text-right">
             <UBadge size="md" icon="i-lucide-clipboard-copy" color="primary" variant="solid" class="mr-2 cursor-pointer" @click="copy(get.value)">Copy</UBadge>
             <UBadge v-if="is_json(get.value)" size="md" icon="i-lucide-file-json-2" color="primary" variant="solid">JSON</UBadge>
@@ -165,7 +165,7 @@ const open_query = ref(false);
           </div>
         </div>
 
-        <pre class="mt-5 p-4 overflow-auto rounded border border-gray-700">{{ get.value }}</pre>
+        <pre class="mt-5 p-4 overflow-auto rounded border border-gray-700 max-h-48">{{ get.value }}</pre>
       </div>
     </template>
   </UModal>
