@@ -125,7 +125,7 @@ const columns: TableColumn<ListItem>[] = [
       }, {
         type: 'separator'
       }, {
-        label: 'Metrics',
+        label: 'Stats',
         async onSelect() {
           key.value = row.original;
           const response = await services.stat(route.params.id, row.original.key);
