@@ -28,22 +28,42 @@ const emit = defineEmits(['reload'])
 
 const get: Ref<GetResponse> = ref({} as GetResponse);
 const query: Ref<QueryResponse> = ref({} as QueryResponse);
+const key = ref();
 
 const get_ttl_type = (ttl_type: TTLType) => {
   switch (ttl_type) {
     case TTLType.Nanoseconds:
-      return "Nanoseconds";
+      return "nanoseconds";
     case TTLType.Microseconds:
-      return "Microseconds";
+      return "microseconds";
     case TTLType.Milliseconds:
-      return "Milliseconds";
+      return "milliseconds";
     case TTLType.Seconds:
-      return "Seconds";
+      return "seconds";
     case TTLType.Minutes:
-      return "Minutes";
+      return "minutes";
     case TTLType.Hours:
-      return "Hours";
+      return "hours";
   }
+}
+
+const is_json = (input: string) => {
+  try {
+    JSON.parse(input);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+const copy = (input: string) => {
+  navigator.clipboard.writeText(input)
+  toast.add({title: t('forms.event', { name: "Value Copied"}), color: 'success'})
+}
+
+const transform_to_json = (value: string) => {
+  const parsed = JSON.parse(value);
+  return JSON.stringify(parsed, null, "  ");
 }
 
 const columns: TableColumn<ListItem>[] = [
@@ -80,6 +100,10 @@ const columns: TableColumn<ListItem>[] = [
           switch (row.original.key_type) {
             case KeyType.Buffer:
               get.value = await services.get(route.params.id, row.original.key);
+              const has_json = is_json(get.value.value);
+              if (has_json) {
+                get.value.value = transform_to_json(get.value.value);
+              }
               open_get.value = true;
               break;
             case KeyType.Counter:
@@ -87,6 +111,13 @@ const columns: TableColumn<ListItem>[] = [
               open_query.value = true;
               break;
           }
+        }
+      }, {
+        label: 'Update',
+        async onSelect() {
+          console.log(row.original);
+          key.value = row.original;
+          open_update.value = true;
         }
       }, {
         type: 'separator'
@@ -119,42 +150,65 @@ const props = defineProps(['keys'])
 
 const open_get = ref(false);
 const open_query = ref(false);
+const open_update = ref(false);
 
 </script>
 
 <template>
   <UModal v-model:open="open_get"
           title="View Buffer"
+          description="Get the stored data and time to live"
           :dismissible="true"
           :close="true">
     <template #body>
-      <h1 class="text-lg">TTL</h1>
+      <h1 class="text-lg">Expires in</h1>
       <div class="p-4">
         {{ get.ttl }} {{ get_ttl_type(get.ttl_type) }}
       </div>
       <div class="pt-2 rounded">
-        <h3 class="text-lg">Value</h3>
+        <div class="flex justify-between">
+          <h3 class="text-lg">Data</h3>
+          <div class="w-1/2 text-right">
+            <UBadge size="md" icon="i-lucide-clipboard-copy" color="primary" variant="solid" class="mr-2 cursor-pointer" @click="copy(get.value)">Copy</UBadge>
+            <UBadge v-if="is_json(get.value)" size="md" icon="i-lucide-file-json-2" color="primary" variant="solid">JSON</UBadge>
+            <UBadge v-else size="md" icon="i-lucide-binary" color="primary" variant="solid">Raw</UBadge>
+          </div>
+        </div>
 
-        <pre class="p-4 overflow-auto">{{ get.value }}</pre>
+        <pre class="mt-5 p-4 overflow-auto rounded border border-gray-700 max-h-48">{{ get.value }}</pre>
       </div>
     </template>
   </UModal>
   <UModal v-model:open="open_query"
           title="View Counter"
+          description="Get the stored quota and time to live"
           :dismissible="true"
           :close="true">
     <template #body>
-      <h3 class="text-lg">TTL</h3>
-      <div class="p-4">
-        {{ query.ttl }} {{ get_ttl_type(query.ttl_type) }}
-      </div>
-      <div class="pt-2 rounded">
-        <h3 class="text-lg">Quota</h3>
+      <div class="flex justify-between">
+        <div>
+          <h3 class="text-lg mb-2">Expires in</h3>
+          <div>
+            {{ query.ttl }} {{ get_ttl_type(query.ttl_type) }}
+          </div>
+        </div>
+        <div class="rounded text-right">
+          <h3 class="text-lg mb-2">Quota</h3>
 
-        <div class="p-4">
-          {{ query.quota }}
+          <div>
+            {{ query.quota }}
+          </div>
         </div>
       </div>
+    </template>
+  </UModal>
+  <UModal v-model:open="open_update"
+          title="Update Key"
+          description="Complete the form to change stored attributes"
+          :dismissible="true"
+          :close="true">
+    <template #body>
+      <FormsUpdateForm :stored_key="key" />
     </template>
   </UModal>
   <UTable :data="props.keys" :columns="columns" class="w-full"/>

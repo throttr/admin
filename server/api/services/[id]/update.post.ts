@@ -20,9 +20,9 @@ export default defineEventHandler(async (event) => {
     const services = getServices();
     const body = await readBody(event)
 
-    const { key, ttl_type, ttl, quota } = body
+    const { key, change_type, attribute_type, value } = body
 
-    if (!key || !ttl_type || !ttl) {
+    if (!key) {
         throw createError({ statusCode: 400, statusMessage: 'Missing parameters' })
     }
     const { id } = event.context.params!;
@@ -30,10 +30,10 @@ export default defineEventHandler(async (event) => {
     const index = services.findIndex((item) => item.id === id);
     const service : ServiceWrapper = services[index];
     return (await service.instance.send({
-        type: RequestType.Insert,
+        type: RequestType.Update,
         key: key,
-        ttl_type: ttl_type,
-        ttl: ttl,
-        quota: quota,
+        change: change_type,
+        attribute: attribute_type,
+        value: value,
     })) as StatusResponse;
 })
