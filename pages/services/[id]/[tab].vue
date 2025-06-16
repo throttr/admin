@@ -43,6 +43,18 @@ onMounted(() => {
         to: `/services/${route.params.id}/connections`
       })
       break;
+    case 'stats':
+      items.value.push( {
+        label: 'Stats',
+        to: `/services/${route.params.id}/stats`
+      })
+      break;
+    case 'storage':
+      items.value.push( {
+        label: 'Storage',
+        to: `/services/${route.params.id}/storage`
+      })
+      break;
   }
 })
 
@@ -62,6 +74,10 @@ onMounted(() => {
 
     <div v-if="route.params.tab === 'storage'">
       <ResourcesServicesStorage />
+    </div>
+
+    <div v-if="route.params.tab === 'stats'">
+      <ResourcesServicesStats />
     </div>
 
     <div v-if="route.params.tab === 'connections'">

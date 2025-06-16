@@ -43,6 +43,11 @@ const items = ref<TabsItem[]>([
     active: false,
   },
   {
+    label: 'Stats',
+    value: 'stats',
+    active: false,
+  },
+  {
     label: 'Connections',
     value: 'connections',
     active: false,

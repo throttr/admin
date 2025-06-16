@@ -14,27 +14,30 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import type {ConnectionsResponse, ConnectionsItem} from "@throttr/sdk";
+import {KeyType, type ListItem, type ListResponse, type StatsItem, type StatsResponse, TTLType} from "@throttr/sdk";
+import { formatDate } from "~/server/throttr/utils";
+import UButton from "#ui/components/Button.vue";
 
 const route = useRoute()
 const services = useServices()
 const toast = useToast()
 const {t} = useI18n()
 
-
 const data = ref({
   success: false,
-  connections: [] as ConnectionsItem[]
+  keys: [] as StatsItem[]
 });
 
 const loading = ref(true);
+const open_insert = ref(false);
+const open_set = ref(false);
 
 
 const fetch = async () => {
   loading.value = true;
-  data.value = await services.connections(route.params.id) as ConnectionsResponse;
-  toast.add({title: t('forms.event', { name: "Connections Retrieved ⤑ Success"}), color: 'success'})
-  console.log("Connections Retrieved ⤑ Success", data.value)
+  data.value = await services.stats(route.params.id) as StatsResponse;
+  toast.add({title: t('forms.event', { name: "Stats Retrieved ⤑ Success"}), color: 'success'})
+  console.log("Stats Retrieved ⤑ Success", data.value)
   loading.value = false;
 }
 
@@ -47,7 +50,8 @@ onMounted(async () => {
   <div>
     <div v-if="!loading">
       <UCard>
-        <TablesConnectionsTable :connections="data.connections"/>
+        <UButton type="button" @click="fetch">Reload</UButton>
+          <TablesStatsTable :keys="data.keys" v-on:reload="fetch"/>
       </UCard>
     </div>
   </div>

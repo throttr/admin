@@ -19,6 +19,7 @@ import {type GetResponse, KeyType, type ListItem, type QueryResponse, type StatR
 import {formatDate} from '~/server/throttr/utils';
 import UButton from '@nuxt/ui/components/Button.vue';
 import UDropdownMenu from '@nuxt/ui/components/DropdownMenu.vue';
+import { getHeader } from "~/server/throttr/utils";
 
 const {t} = useI18n()
 const toast = useToast()
@@ -75,17 +76,17 @@ const columns: TableColumn<ListItem>[] = [
   },
   {
     accessorKey: 'kind',
-    header: 'Kind',
+    header: ({ column }) => getHeader(column, 'Kind'),
     cell: ({row}) => row.original.key_type == KeyType.Counter ? `Counter` : `Buffer`,
   },
   {
     accessorKey: 'ttl_type',
-    header: 'TTL Type',
+    header: ({ column }) => getHeader(column, 'TTL Type'),
     cell: ({row}) => get_ttl_type(row.original.ttl_type),
   },
   {
     accessorKey: 'expires_at',
-    header: 'Expires At',
+    header: ({ column }) => getHeader(column, 'Expires At'),
     cell: ({row}) => formatDate(row.original.expires_at, true),
   },
   {
@@ -112,6 +113,8 @@ const columns: TableColumn<ListItem>[] = [
               open_query.value = true;
               break;
           }
+          toast.add({title: t('forms.event', { name: "Key Details Retrieved ⤑ Success"}), color: 'success'})
+          console.log("Key Details Retrieved ⤑ Success", row.original.key)
         }
       }, {
         label: 'Update',
@@ -177,6 +180,12 @@ const open_query = ref(false);
 const open_update = ref(false);
 const open_stats = ref(false);
 
+const sorting = ref([
+  {
+    id: 'expires_at',
+    desc: false
+  }
+])
 </script>
 
 <template>
@@ -266,5 +275,5 @@ const open_stats = ref(false);
       </div>
     </template>
   </UModal>
-  <UTable :data="props.keys" :columns="columns" class="w-full"/>
+  <UTable v-model:sorting="sorting" :data="props.keys" :columns="columns" class="w-full"/>
 </template>
