@@ -1,4 +1,3 @@
-<script setup lang="ts">
 // Copyright (C) 2025 Ian Torres
 //
 // This program is free software: you can redistribute it and/or modify
@@ -13,13 +12,25 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
-</script>
 
-<template>
-  <div>
-    <div class="mx-auto max-w-7xl">
-      <slot />
-    </div>
-  </div>
-</template>
+import {getServices, ServiceWrapper} from '~/server/throttr/instances'
+import {RequestType, ChannelResponse} from '@throttr/sdk'
 
+export default defineEventHandler(async (event) => {
+    const services = getServices();
+    const body = await readBody(event)
+
+    const { channel } = body
+
+    if (!channel) {
+        throw createError({ statusCode: 400, statusMessage: 'Missing parameters' })
+    }
+    const { id } = event.context.params!;
+
+    const index = services.findIndex((item) => item.id === id);
+    const service : ServiceWrapper = services[index];
+    return (await service.instance.send({
+        type: RequestType.Channel,
+        channel: channel,
+    })) as ChannelResponse;
+})

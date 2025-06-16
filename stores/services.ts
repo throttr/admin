@@ -22,7 +22,7 @@ import type {
     StatusResponse,
     GetResponse,
     QueryResponse,
-    StatResponse, StatsResponse
+    StatResponse, StatsResponse, ChannelsResponse, ChannelResponse
 } from "@throttr/sdk";
 import type {AddressInfo} from "net";
 import * as z from "zod";
@@ -235,6 +235,25 @@ export const useServices = defineStore('services', () => {
         return response as StatsResponse;
     }
 
+    const channels = async (id: any) => {
+        const response = await $fetch(`/api/services/${id}/channels`, {
+            method: 'GET'
+        });
+
+        return response as ChannelsResponse;
+    }
+
+    const channel = async (id: any, channel: string) => {
+        const response = await $fetch(`/api/services/${id}/channel`, {
+            method: 'POST',
+            body: {
+                channel: channel
+            }
+        });
+
+        return response as ChannelResponse
+    }
+
     const get = async (id: any, key: string) => {
         const response = await $fetch(`/api/services/${id}/get`, {
             method: 'POST',
@@ -305,6 +324,8 @@ export const useServices = defineStore('services', () => {
         query,
         stat,
         stats,
+        channels,
+        channel,
         connections,
         setup,
         submit,

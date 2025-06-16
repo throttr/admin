@@ -15,31 +15,29 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import type { TableColumn } from '@nuxt/ui'
-import type { ConnectionsItem } from '@throttr/sdk';
 import { formatDate } from '~/server/throttr/utils';
+import type {ChannelConnectionItem} from "@throttr/sdk/dist/src/types";
 
-const {t} = useI18n()
-
-const columns: TableColumn<ConnectionsItem>[] = [
+const columns: TableColumn<ChannelConnectionItem>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
     cell: ({ row }) => row.original.id,
   },
   {
-    accessorKey: 'kind',
-    header: 'Kind',
-    cell: ({ row }) => row.original.kind == 0 ? `Client` : `Agent`,
+    accessorKey: 'subscribed_at',
+    header: 'Subscribed At',
+    cell: ({ row }) => formatDate(row.original.subscribed_at, true),
   },
   {
-    accessorKey: 'type',
-    header: 'Type',
-    cell: ({ row }) => row.original.type == 0 ? `TCP` : `UNIX`,
+    accessorKey: 'read_bytes',
+    header: 'Read bytes',
+    cell: ({ row }) => row.original.read_bytes,
   },
   {
-    accessorKey: 'connected_at',
-    header: 'Connected At',
-    cell: ({ row }) => formatDate(row.original.connected_at, true),
+    accessorKey: 'write_bytes',
+    header: 'Write bytes',
+    cell: ({ row }) => row.original.write_bytes,
   }
 ]
 

@@ -30,9 +30,14 @@ const items = ref<BreadcrumbItem[]>([
 ])
 
 onMounted(() => {
+  items.value.push({
+    label: (route.params.id as string).substring(0, 6),
+    to: `/services/${route.params.id}`
+  })
+
   switch (route.params.tab) {
     case 'overview':
-      items.value.push( {
+      items.value.push({
         label: 'Overview',
         to: `/services/${route.params.id}/overview`
       })
@@ -53,6 +58,12 @@ onMounted(() => {
       items.value.push( {
         label: 'Storage',
         to: `/services/${route.params.id}/storage`
+      })
+      break;
+    case 'channels':
+      items.value.push( {
+        label: 'Channels',
+        to: `/services/${route.params.id}/channels`
       })
       break;
   }
@@ -82,6 +93,10 @@ onMounted(() => {
 
     <div v-if="route.params.tab === 'connections'">
       <ResourcesServicesConnections />
+    </div>
+
+    <div v-if="route.params.tab === 'channels'">
+      <ResourcesServicesChannels />
     </div>
 
   </div>

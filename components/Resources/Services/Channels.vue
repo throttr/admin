@@ -14,8 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import {type StatsItem, type StatsResponse} from "@throttr/sdk";
+import {
+  type ChannelsResponse,
+} from "@throttr/sdk";
 import UButton from "#ui/components/Button.vue";
+import type {ChannelItem} from "@throttr/sdk/dist/src/types";
 
 const route = useRoute()
 const services = useServices()
@@ -24,15 +27,16 @@ const {t} = useI18n()
 
 const data = ref({
   success: false,
-  keys: [] as StatsItem[]
+  channels: [] as ChannelItem[]
 });
 
 const loading = ref(true);
 
+
 const fetch = async () => {
   loading.value = true;
-  data.value = await services.stats(route.params.id) as StatsResponse;
-  toast.add({title: t('forms.event', { name: "Stats Retrieved ⤑ Success"}), color: 'success'})
+  data.value = await services.channels(route.params.id) as ChannelsResponse;
+  toast.add({title: t('forms.event', { name: "Channels Retrieved ⤑ Success"}), color: 'success'})
   console.log("Stats Retrieved ⤑ Success", data.value)
   loading.value = false;
 }
@@ -47,7 +51,7 @@ onMounted(async () => {
     <div v-if="!loading">
       <UCard>
         <UButton type="button" @click="fetch">Reload</UButton>
-          <TablesStatsTable :keys="data.keys" v-on:reload="fetch"/>
+          <TablesChannelsTable :channels="data.channels" v-on:reload="fetch"/>
       </UCard>
     </div>
   </div>
