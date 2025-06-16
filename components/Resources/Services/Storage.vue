@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import {KeyType, type ListItem, type ListResponse, TTLType} from "@throttr/sdk";
-import { formatDate } from "~/server/throttr/utils";
+import {type ListItem, type ListResponse} from "@throttr/sdk";
 
 const route = useRoute()
 const services = useServices()
@@ -48,9 +47,6 @@ onMounted(async () => {
 <template>
   <div>
     <div v-if="!loading">
-      <div class="mb-10">
-        <h1 class="text-5xl">Storage</h1>
-      </div>
       <UModal v-model:open="open_insert"
               title="Add Counter"
               description="Complete the form to create a counter"
@@ -73,6 +69,7 @@ onMounted(async () => {
 
       <UCard>
           <div class="flex gap-x-2">
+            <UButton type="button" @click="fetch">Reload</UButton>
             <UButton type="button" @click="open_insert = true">Add Counter</UButton>
             <UButton type="button" @click="open_set = true">Add Buffer</UButton>
           </div>

@@ -64,10 +64,6 @@ onMounted(async () => {
 <template>
   <div>
     <div v-if="data.success">
-      <div class="mb-10">
-        <h1 class="text-5xl">Overview</h1>
-      </div>
-
       <div class="grid grid-cols-4 gap-10 mb-20">
         <MetricCard
             title="Report At" :value="formatDate(data.timestamp, false)" />

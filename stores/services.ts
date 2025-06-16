@@ -22,7 +22,7 @@ import type {
     StatusResponse,
     GetResponse,
     QueryResponse,
-    StatResponse
+    StatResponse, StatsResponse
 } from "@throttr/sdk";
 import type {AddressInfo} from "net";
 import * as z from "zod";
@@ -227,6 +227,14 @@ export const useServices = defineStore('services', () => {
         return response as StatResponse;
     }
 
+    const stats = async (id: any) => {
+        const response = await $fetch(`/api/services/${id}/stats`, {
+            method: 'GET'
+        });
+
+        return response as StatsResponse;
+    }
+
     const get = async (id: any, key: string) => {
         const response = await $fetch(`/api/services/${id}/get`, {
             method: 'POST',
@@ -296,6 +304,7 @@ export const useServices = defineStore('services', () => {
         get,
         query,
         stat,
+        stats,
         connections,
         setup,
         submit,
