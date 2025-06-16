@@ -18,6 +18,8 @@ import type {ConnectionsResponse, ConnectionsItem} from "@throttr/sdk";
 
 const route = useRoute()
 const services = useServices()
+const toast = useToast()
+const {t} = useI18n()
 
 
 const data = ref({
@@ -31,6 +33,8 @@ const loading = ref(true);
 const fetch = async () => {
   loading.value = true;
   data.value = await services.connections(route.params.id) as ConnectionsResponse;
+  toast.add({title: t('forms.event', { name: "Connections Retrieved ⤑ Success"}), color: 'success'})
+  console.log("Connections Retrieved ⤑ Success", data.value)
   loading.value = false;
 }
 

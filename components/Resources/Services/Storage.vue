@@ -19,6 +19,8 @@ import { formatDate } from "~/server/throttr/utils";
 
 const route = useRoute()
 const services = useServices()
+const toast = useToast()
+const {t} = useI18n()
 
 const data = ref({
   success: false,
@@ -33,6 +35,8 @@ const open_set = ref(false);
 const fetch = async () => {
   loading.value = true;
   data.value = await services.list(route.params.id) as ListResponse;
+  toast.add({title: t('forms.event', { name: "Keys Retrieved ⤑ Success"}), color: 'success'})
+  console.log("Keys Retrieved ⤑ Success", data.value)
   loading.value = false;
 }
 

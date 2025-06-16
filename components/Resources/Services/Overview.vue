@@ -21,6 +21,8 @@ import { formatDate } from "~/server/throttr/utils";
 
 const route = useRoute()
 const services = useServices()
+const toast = useToast()
+const {t} = useI18n()
 
 const data : Ref<InfoResponse> = ref({
   success: false
@@ -50,6 +52,8 @@ const sections = [
 
 const fetch = async () => {
   data.value = await services.info(route.params.id) as InfoResponse;
+  toast.add({title: t('forms.event', { name: "Metrics Retrieved ⤑ Success"}), color: 'success'})
+  console.log("Metrics Retrieved ⤑ Success", data.value)
 }
 
 onMounted(async () => {

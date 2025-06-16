@@ -124,8 +124,15 @@ const columns: TableColumn<ListItem>[] = [
       }, {
         label: 'Remove',
         async onSelect() {
-          await services.purge(route.params.id, row.original.key);
-          emit('reload');
+          const response = await services.purge(route.params.id, row.original.key);
+          if (response.success) {
+            toast.add({title: t('forms.event', { name: "Key Purged ⤑ Success"}), color: 'success'})
+            console.log("Key Purged ⤑ Success", row.original.key)
+            emit('reload');
+          } else {
+            toast.add({title: t('forms.event', { name: "Key Purged ⤑ Failed"}), color: 'error'})
+            console.log("Key Purged ⤑ Failed", row.original.key)
+          }
         }
       }]
 
