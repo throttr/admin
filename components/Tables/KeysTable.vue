@@ -28,6 +28,7 @@ const emit = defineEmits(['reload'])
 
 const get: Ref<GetResponse> = ref({} as GetResponse);
 const query: Ref<QueryResponse> = ref({} as QueryResponse);
+const key = ref();
 
 const get_ttl_type = (ttl_type: TTLType) => {
   switch (ttl_type) {
@@ -112,6 +113,13 @@ const columns: TableColumn<ListItem>[] = [
           }
         }
       }, {
+        label: 'Update',
+        async onSelect() {
+          console.log(row.original);
+          key.value = row.original;
+          open_update.value = true;
+        }
+      }, {
         type: 'separator'
       }, {
         label: 'Remove',
@@ -142,12 +150,14 @@ const props = defineProps(['keys'])
 
 const open_get = ref(false);
 const open_query = ref(false);
+const open_update = ref(false);
 
 </script>
 
 <template>
   <UModal v-model:open="open_get"
           title="View Buffer"
+          description="Get the stored data and time to live"
           :dismissible="true"
           :close="true">
     <template #body>
@@ -171,20 +181,34 @@ const open_query = ref(false);
   </UModal>
   <UModal v-model:open="open_query"
           title="View Counter"
+          description="Get the stored quota and time to live"
           :dismissible="true"
           :close="true">
     <template #body>
-      <h3 class="text-lg">TTL</h3>
-      <div class="p-4">
-        {{ query.ttl }} {{ get_ttl_type(query.ttl_type) }}
-      </div>
-      <div class="pt-2 rounded">
-        <h3 class="text-lg">Quota</h3>
+      <div class="flex justify-between">
+        <div>
+          <h3 class="text-lg mb-2">Expires in</h3>
+          <div>
+            {{ query.ttl }} {{ get_ttl_type(query.ttl_type) }}
+          </div>
+        </div>
+        <div class="rounded text-right">
+          <h3 class="text-lg mb-2">Quota</h3>
 
-        <div class="p-4">
-          {{ query.quota }}
+          <div>
+            {{ query.quota }}
+          </div>
         </div>
       </div>
+    </template>
+  </UModal>
+  <UModal v-model:open="open_update"
+          title="Update Key"
+          description="Complete the form to change stored attributes"
+          :dismissible="true"
+          :close="true">
+    <template #body>
+      <FormsUpdateForm :stored_key="key" />
     </template>
   </UModal>
   <UTable :data="props.keys" :columns="columns" class="w-full"/>
