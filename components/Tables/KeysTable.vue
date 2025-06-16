@@ -15,7 +15,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import type {TableColumn} from '@nuxt/ui'
-import {type GetResponse, KeyType, type ListItem, type QueryResponse, TTLType} from '@throttr/sdk';
+import {type GetResponse, KeyType, type ListItem, type QueryResponse, type StatResponse, TTLType} from '@throttr/sdk';
 import {formatDate} from '~/server/throttr/utils';
 import UButton from '@nuxt/ui/components/Button.vue';
 import UDropdownMenu from '@nuxt/ui/components/DropdownMenu.vue';
@@ -28,6 +28,7 @@ const emit = defineEmits(['reload'])
 
 const get: Ref<GetResponse> = ref({} as GetResponse);
 const query: Ref<QueryResponse> = ref({} as QueryResponse);
+const stat: Ref<StatResponse> = ref({} as StatResponse);
 const key = ref();
 
 const get_ttl_type = (ttl_type: TTLType) => {
@@ -115,9 +116,25 @@ const columns: TableColumn<ListItem>[] = [
       }, {
         label: 'Update',
         async onSelect() {
-          console.log(row.original);
           key.value = row.original;
           open_update.value = true;
+        }
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Metrics',
+        async onSelect() {
+          key.value = row.original;
+          const response = await services.stat(route.params.id, row.original.key);
+          if (response.success) {
+            toast.add({title: t('forms.event', { name: "Key Metrics Retrieved ⤑ Success"}), color: 'success'})
+            console.log("Key Metrics Retrieved ⤑ Success", row.original.key)
+            stat.value = response;
+          } else {
+            toast.add({title: t('forms.event', { name: "Key Metrics Retrieved ⤑ Failed"}), color: 'error'})
+            console.log("Key Metrics Retrieved ⤑ Failed", row.original.key)
+          }
+          open_stats.value = true;
         }
       }, {
         type: 'separator'
@@ -158,10 +175,12 @@ const props = defineProps(['keys'])
 const open_get = ref(false);
 const open_query = ref(false);
 const open_update = ref(false);
+const open_stats = ref(false);
 
 </script>
 
 <template>
+  <!-- GET -->
   <UModal v-model:open="open_get"
           title="View Buffer"
           description="Get the stored data and time to live"
@@ -186,6 +205,7 @@ const open_update = ref(false);
       </div>
     </template>
   </UModal>
+  <!-- QUERY -->
   <UModal v-model:open="open_query"
           title="View Counter"
           description="Get the stored quota and time to live"
@@ -209,6 +229,7 @@ const open_update = ref(false);
       </div>
     </template>
   </UModal>
+  <!-- UPDATE -->
   <UModal v-model:open="open_update"
           title="Update Key"
           description="Complete the form to change stored attributes"
@@ -216,6 +237,33 @@ const open_update = ref(false);
           :close="true">
     <template #body>
       <FormsUpdateForm :stored_key="key" />
+    </template>
+  </UModal>
+  <!-- STAT -->
+  <UModal v-model:open="open_stats"
+          title="View Metrics"
+          description="Get the stored metrics."
+          :dismissible="true"
+          :close="true">
+    <template #body>
+      <div class="grid grid-cols-2 gap-10">
+        <div>
+          <h1 class="text-xl">Total reads</h1>
+          <p class="px-8 py-8 text-3xl">{{ stat.total_reads }}</p>
+        </div>
+        <div>
+          <h1 class="text-xl">Reads per minute</h1>
+          <p class="px-8 py-8 text-3xl">{{ stat.reads_per_minute }}</p>
+        </div>
+        <div>
+          <h1 class="text-xl">Total writes</h1>
+          <p class="px-8 py-8 text-3xl">{{ stat.total_writes }}</p>
+        </div>
+        <div>
+          <h1 class="text-xl">Writes per minute</h1>
+          <p class="px-8 py-8 text-3xl">{{ stat.writes_per_minute }}</p>
+        </div>
+      </div>
     </template>
   </UModal>
   <UTable :data="props.keys" :columns="columns" class="w-full"/>
