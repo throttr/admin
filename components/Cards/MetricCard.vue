@@ -22,10 +22,9 @@ const props = defineProps(['title', 'value'])
 <template>
   <UCard>
     <template #header>
-      <h2 class="text-2xl">{{ props.title }}</h2>
+      <h2 class="text-lg">{{ props.title }}</h2>
     </template>
-
-    {{ props.value }}
+    <span class="text-sm">{{ props.value }}</span>
   </UCard>
 </template>
 

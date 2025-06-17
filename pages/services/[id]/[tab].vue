@@ -72,7 +72,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-32">
+  <div class="p-8">
     <div class="py-10">
       <UBreadcrumb :items="items" />
     </div>
