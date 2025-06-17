@@ -15,7 +15,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import type { TableColumn } from '@nuxt/ui'
-import { formatDate } from '~/server/throttr/utils';
+import { formatDate, getHeader } from '~/server/throttr/utils';
 import type {ChannelConnectionItem} from "@throttr/sdk/dist/src/types";
 
 const columns: TableColumn<ChannelConnectionItem>[] = [
@@ -26,17 +26,17 @@ const columns: TableColumn<ChannelConnectionItem>[] = [
   },
   {
     accessorKey: 'subscribed_at',
-    header: 'Subscribed At',
+    header: ({ column }) => getHeader(column, 'Subscribed At'),
     cell: ({ row }) => formatDate(row.original.subscribed_at, true),
   },
   {
     accessorKey: 'read_bytes',
-    header: 'Read bytes',
+    header: ({ column }) => getHeader(column, 'Read bytes'),
     cell: ({ row }) => row.original.read_bytes,
   },
   {
     accessorKey: 'write_bytes',
-    header: 'Write bytes',
+    header: ({ column }) => getHeader(column, 'Write bytes'),
     cell: ({ row }) => row.original.write_bytes,
   }
 ]
