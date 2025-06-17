@@ -18,11 +18,14 @@ import MetricCard from "~/components/Cards/MetricCard.vue";
 import TimedMetricCard from "~/components/Cards/TimedMetricCard.vue";
 import type {InfoResponse} from "@throttr/sdk";
 import { formatDate } from "~/server/throttr/utils";
+import MemoryChart from "~/components/Charts/MemoryChart.vue";
 
 const route = useRoute()
 const services = useServices()
 const toast = useToast()
 const {t} = useI18n()
+
+const historic : Ref<InfoResponse[]> = ref([]);
 
 const data : Ref<InfoResponse> = ref({
   success: false
@@ -50,84 +53,113 @@ const sections = [
   { name: 'WHOAMI', totalKey: 'total_whoami_requests', perMinuteKey: 'total_whoami_requests_per_minute' },
 ];
 
-const fetch = async () => {
+const intervalId = ref()
+
+const fetch = async (silence: boolean = false) => {
   data.value = await services.info(route.params.id) as InfoResponse;
-  toast.add({title: t('forms.event', { name: "Metrics Retrieved ⤑ Success"}), color: 'success'})
+  historic.value.push({
+    ...data.value
+  })
+  if (!silence)
+    toast.add({title: t('forms.event', { name: "Metrics Retrieved ⤑ Success"}), color: 'success'})
+
+  if (historic.value.length > 10) {
+    historic.value.shift();
+  }
   console.log("Metrics Retrieved ⤑ Success", data.value)
 }
 
 onMounted(async () => {
   await fetch()
+  intervalId.value = setInterval(async () => {
+    await fetch(true);
+    console.log("OVERVIEW INFO INTERVAL ASSIGNED")
+  }, 1000)
+})
+
+onUnmounted(() => {
+  clearInterval(intervalId.value);
+  console.log("OVERVIEW INFO INTERVAL REMOVED")
 })
 </script>
 
 <template>
   <div>
     <div v-if="data.success">
-      <div class="grid grid-cols-4 gap-10 mb-20">
-        <MetricCard
-            title="Report At" :value="formatDate(data.timestamp, false)" />
-        <MetricCard
-            title="Started At" :value="formatDate(data.startup_timestamp, true)" />
-        <MetricCard
-            title="Version" :value="data.version" />
-        <MetricCard
-            title="Connections"
-            :value="data.total_connections" />
+      <div class="grid grid-cols-4 gap-10 mb-10">
+
+        <div>
+          <div>
+            <h1 class="text-2xl mb-10">Overview</h1>
+          </div>
+
+          <UCard>
+            <div class="grid grid-cols-2 gap-10">
+              <MetricCard
+                  title="Report At" :value="formatDate(data.timestamp, false)" />
+              <MetricCard
+                  title="Started At" :value="formatDate(data.startup_timestamp, true)" />
+              <MetricCard
+                  title="Version" :value="data.version" />
+              <MetricCard
+                  title="Connections"
+                  :value="data.total_connections" />
+            </div>
+          </UCard>
+        </div>
+
+        <div class="col-span-3">
+          <div class="mb-10">
+            <h1 class="text-2xl">Service</h1>
+          </div>
+          <div class="grid grid-cols-2 gap-10">
+            <UCard>
+              <ChartsRequestTypesChart :historic="historic"/>
+            </UCard>
+            <UCard>
+              <ChartsRequestTypesPerMinuteChart :historic="historic"/>
+            </UCard>
+          </div>
+        </div>
+
       </div>
 
+      <div class="grid grid-cols-4 gap-10 mb-10">
+        <div>
+          <div class="mb-10">
+            <h1 class="text-2xl">Records</h1>
+          </div>
 
-      <div class="mb-10">
-        <h1 class="text-5xl">Storage</h1>
+          <UCard>
+            <ChartsStorageChart :historic="historic"/>
+          </UCard>
+        </div>
+
+        <div>
+          <div class="mb-10">
+            <h1 class="text-2xl">Memory</h1>
+          </div>
+
+          <UCard>
+            <ChartsMemoryChart :historic="historic" />
+          </UCard>
+        </div>
+
+        <div class="col-span-2">
+          <div class="mb-10">
+            <h1 class="text-2xl">Network</h1>
+          </div>
+          <div class="grid grid-cols-2 gap-10">
+            <UCard>
+              <ChartsNetworkChart :historic="historic"/>
+            </UCard>
+            <UCard>
+              <ChartsNetworkPerMinuteChart :historic="historic"/>
+            </UCard>
+          </div>
+        </div>
       </div>
 
-      <div class="grid grid-cols-3 gap-10 mb-20">
-        <MetricCard title="Number of Keys" :value="data.total_keys" />
-        <MetricCard title="Number of Buffers" :value="data.total_buffers" />
-        <MetricCard title="Number of Counters" :value="data.total_counters" />
-      </div>
-
-
-      <div class="mb-10">
-        <h1 class="text-5xl">Memory Allocated</h1>
-      </div>
-
-      <div class="grid grid-cols-2 gap-10 mb-20">
-        <MetricCard
-            title="Allocated Bytes on Buffers"
-            :value="data.total_allocated_bytes_on_buffers" />
-        <MetricCard
-            title="Allocated Bytes on Counters"
-            :value="data.total_allocated_bytes_on_counters" />
-      </div>
-
-      <div class="mb-10">
-        <h1 class="text-5xl">Network</h1>
-      </div>
-
-      <div class="grid grid-cols-2 gap-10 mb-20">
-        <TimedMetricCard
-            title="Read Bytes"
-            :total="data.total_read_bytes"
-            :per_minute="data.total_read_bytes_per_minute"/>
-        <TimedMetricCard
-            title="Write Bytes"
-            :total="data.total_write_bytes"
-            :per_minute="data.total_write_bytes_per_minute"/>
-      </div>
-
-      <div class="mb-10">
-        <h1 class="text-5xl">Requests</h1>
-      </div>
-
-      <div class="grid grid-cols-4 gap-8">
-        <TimedMetricCard
-            v-for="section in sections"
-            :key="section.name"
-            :title="section.name"
-            :total="data[section.totalKey]"
-            :per_minute="data[section.perMinuteKey]"/>
-      </div>
     </div>
   </div>
 </template>

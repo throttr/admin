@@ -10,7 +10,8 @@ export default defineNuxtConfig({
       '@nuxt/ui',
       '@nuxt/eslint',
       '@nuxtjs/i18n',
-      '@pinia/nuxt'
+      '@pinia/nuxt',
+      'nuxt-charts'
     ],
     css: ['~/assets/css/main.css'],
     i18n: {

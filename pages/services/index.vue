@@ -38,7 +38,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="p-32">
+  <div class="p-16">
     <div class="py-10">
       <UBreadcrumb :items="items" />
     </div>
