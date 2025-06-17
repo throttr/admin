@@ -46,5 +46,5 @@ const props = defineProps(['connections'])
 </script>
 
 <template>
-  <UTable :data="props.connections" :columns="columns" class="flex-1" />
+  <UTable :data="props.connections" :columns="columns" class="flex-1 max-h-80" />
 </template>
