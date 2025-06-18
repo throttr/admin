@@ -15,10 +15,8 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import MetricCard from "~/components/Cards/MetricCard.vue";
-import TimedMetricCard from "~/components/Cards/TimedMetricCard.vue";
 import type {InfoResponse} from "@throttr/sdk";
 import { formatDate } from "~/server/throttr/utils";
-import MemoryChart from "~/components/Charts/MemoryChart.vue";
 
 const route = useRoute()
 const services = useServices()

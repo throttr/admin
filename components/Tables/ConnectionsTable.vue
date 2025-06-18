@@ -53,23 +53,12 @@ const columns: TableColumn<ConnectionsItem>[] = [
       }, {
         label: 'View',
         async onSelect() {
-
         }
       }, {
-        label: 'Update',
+        label: 'Publish',
         async onSelect() {
-        }
-      }, {
-        type: 'separator'
-      }, {
-        label: 'Stats',
-        async onSelect() {
-        }
-      }, {
-        type: 'separator'
-      }, {
-        label: 'Remove',
-        async onSelect() {
+          publish_channel.value = row.original.id;
+          open_publish.value = true;
         }
       }]
 
@@ -92,8 +81,20 @@ const columns: TableColumn<ConnectionsItem>[] = [
 
 const props = defineProps(['connections'])
 
+const open_publish = ref(false);
+const publish_channel = ref('');
+
 </script>
 
 <template>
+  <UModal v-model:open="open_publish"
+          title="Publish"
+          description="Complete the form to send a message to the connection"
+          :dismissible="true"
+          :close="true">
+    <template #body>
+      <FormsPublishForm :channel="publish_channel" v-on:success="open_publish = false;"/>
+    </template>
+  </UModal>
   <UTable :data="props.connections" :columns="columns" class="flex-1" />
 </template>

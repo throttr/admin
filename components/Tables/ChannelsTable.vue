@@ -67,8 +67,10 @@ const columns: TableColumn<ChannelItem>[] = [
           open_channel.value = true;
         }
       }, {
-        label: 'Update',
+        label: 'Publish',
         async onSelect() {
+          channel_publish.value = row.original.channel;
+          open_publish.value = true;
         }
       }, {
         type: 'separator'
@@ -103,6 +105,8 @@ const columns: TableColumn<ChannelItem>[] = [
 
 const props = defineProps(['channels'])
 const open_channel = ref(false);
+const open_publish = ref(false);
+const channel_publish = ref('');
 
 const sorting = ref([
   {
@@ -122,6 +126,16 @@ const sorting = ref([
           class="max-w-3xl">
     <template #body>
       <TablesChannelConnectionsTable :connections="channel.connections" />
+    </template>
+  </UModal>
+  <!-- PUBLISH -->
+  <UModal v-model:open="open_publish"
+          title="Publish"
+          description="Complete the form to send a message to the connection"
+          :dismissible="true"
+          :close="true">
+    <template #body>
+      <FormsPublishForm :channel="channel_publish" v-on:success="open_publish = false;"/>
     </template>
   </UModal>
   <UTable v-model:sorting="sorting" :data="props.channels" :columns="columns" class="w-full"/>
