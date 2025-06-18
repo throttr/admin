@@ -16,7 +16,9 @@
 
 import type { TableColumn } from '@nuxt/ui'
 import type { ConnectionsItem } from '@throttr/sdk';
-import { formatDate } from '~/server/throttr/utils';
+import {formatDate, getHeader} from '~/server/throttr/utils';
+import UDropdownMenu from "#ui/components/DropdownMenu.vue";
+import UButton from "#ui/components/Button.vue";
 
 const {t} = useI18n()
 
@@ -28,18 +30,63 @@ const columns: TableColumn<ConnectionsItem>[] = [
   },
   {
     accessorKey: 'kind',
-    header: 'Kind',
+    header: ({ column }) => getHeader(column, 'Kind'),
     cell: ({ row }) => row.original.kind == 0 ? `Client` : `Agent`,
   },
   {
     accessorKey: 'type',
-    header: 'Type',
+    header: ({ column }) => getHeader(column, 'Type'),
     cell: ({ row }) => row.original.type == 0 ? `TCP` : `UNIX`,
   },
   {
     accessorKey: 'connected_at',
-    header: 'Connected At',
+    header: ({ column }) => getHeader(column, 'Connected At'),
     cell: ({ row }) => formatDate(row.original.connected_at, true),
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    cell: ({row}) => {
+      const items = [{
+        type: 'label',
+        label: 'Actions'
+      }, {
+        label: 'View',
+        async onSelect() {
+
+        }
+      }, {
+        label: 'Update',
+        async onSelect() {
+        }
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Stats',
+        async onSelect() {
+        }
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Remove',
+        async onSelect() {
+        }
+      }]
+
+      return h('div', {class: 'text-right'}, h(UDropdownMenu, {
+        'content': {
+          align: 'end'
+        },
+        items,
+        'aria-label': 'Actions dropdown'
+      }, () => h(UButton, {
+        'icon': 'i-lucide-ellipsis-vertical',
+        'color': 'neutral',
+        'variant': 'ghost',
+        'class': 'ml-auto',
+        'aria-label': 'Actions dropdown'
+      })))
+    }
   }
 ]
 
