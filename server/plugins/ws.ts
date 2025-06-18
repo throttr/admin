@@ -8,7 +8,7 @@ export default defineNitroPlugin((nitroApp) => {
     console.log('Nitro plugin [Server]')
     const services = getServices();
 
-    const subscriptions = new Map<string, Set<WebSocket>>() // canal -> conexiones
+    const subscriptions = new Map<string, Set<WebSocket>>() // channel -> sockets
 
     wss.on('connection', (socket) => {
         let currentChannel: string | null = null
@@ -39,6 +39,13 @@ export default defineNitroPlugin((nitroApp) => {
                     callback: callback,
                 })) as StatusResponse;
 
+                if (response.success) {
+                    if (!subscriptions.has(currentChannel)) {
+                        subscriptions.set(currentChannel, new Set());
+                    }
+                    subscriptions.get(currentChannel)!.add(socket);
+                }
+
                 socket.send(JSON.stringify({
                     event: "SYSTEM",
                     success: response.success,
@@ -52,6 +59,15 @@ export default defineNitroPlugin((nitroApp) => {
                     type: RequestType.Unsubscribe,
                     channel: currentChannel!,
                 })) as StatusResponse;
+
+                if (currentChannel) {
+                    const clients = subscriptions.get(currentChannel);
+                    clients?.delete(socket);
+                    if (clients && clients.size === 0) {
+                        subscriptions.delete(currentChannel);
+                    }
+                }
+
                 socket.send(JSON.stringify({
                     event: "SYSTEM",
                     success: response.success,
@@ -60,6 +76,13 @@ export default defineNitroPlugin((nitroApp) => {
         })
 
         socket.on('close', () => {
+            if (currentChannel) {
+                const clients = subscriptions.get(currentChannel)
+                clients?.delete(socket)
+                if (clients && clients.size === 0) {
+                    subscriptions.delete(currentChannel)
+                }
+            }
         })
     })
 
