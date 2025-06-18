@@ -73,6 +73,12 @@ const columns: TableColumn<ChannelItem>[] = [
           open_publish.value = true;
         }
       }, {
+        label: 'Listen',
+        async onSelect() {
+          channel_publish.value = row.original.channel;
+          open_chat.value = true;
+        }
+      }, {
         type: 'separator'
       }, {
         label: 'Stats',
@@ -106,6 +112,7 @@ const columns: TableColumn<ChannelItem>[] = [
 const props = defineProps(['channels'])
 const open_channel = ref(false);
 const open_publish = ref(false);
+const open_chat = ref(false);
 const channel_publish = ref('');
 
 const sorting = ref([
@@ -126,6 +133,17 @@ const sorting = ref([
           class="max-w-3xl">
     <template #body>
       <TablesChannelConnectionsTable :connections="channel.connections" />
+    </template>
+  </UModal>
+  <!-- LISTEN -->
+  <UModal v-model:open="open_chat"
+          title="Listen Channel"
+          description="Intercept and view channel messages"
+          :dismissible="true"
+          :close="true"
+          class="max-w-3xl">
+    <template #body>
+      <CardsChannelChatCard :channel="channel_publish" />
     </template>
   </UModal>
   <!-- PUBLISH -->
