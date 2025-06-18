@@ -6,13 +6,14 @@ const props = defineProps(['historic']);
 
 
 const categories: Record<string, BulletLegendItemInterface> = computed(() => ({
-  total_counters: {
-    name: "Counters",
-    color: "#607D8B" // Un gris azulado neutro para "ALL"
-  },
   total_buffers: {
     name: "Buffers",
     color: "#4CAF50" // Verde brillante para "INSERT" (creación)
+  },
+
+  total_counters: {
+    name: "Counters",
+    color: "#607D8B" // Un gris azulado neutro para "ALL"
   },
 }));
 
