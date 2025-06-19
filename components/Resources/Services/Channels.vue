@@ -31,12 +31,13 @@ const data = ref({
 });
 
 const loading = ref(true);
+const open_subscribe = ref(false);
 
 
 const fetch = async () => {
   loading.value = true;
   data.value = await services.channels(route.params.id) as ChannelsResponse;
-  toast.add({title: t('forms.event', { name: "Channels Retrieved ⤑ Success"}), color: 'success'})
+  toast.add({title: t('forms.event', {name: "Channels Retrieved ⤑ Success"}), color: 'success'})
   console.log("Stats Retrieved ⤑ Success", data.value)
   loading.value = false;
 }
@@ -49,9 +50,24 @@ onMounted(async () => {
 <template>
   <div>
     <div v-if="!loading">
+      <!-- SUBSCRIBE -->
+      <UModal v-model:open="open_subscribe"
+              title="Subscribe"
+              description="Complete the form to start to intercept channel"
+              :dismissible="true"
+              :close="true"
+              class="max-w-sm">
+        <template #body>
+          <FormsSubscribeForm />
+        </template>
+      </UModal>
+
       <UCard>
-        <UButton type="button" @click="fetch">Reload</UButton>
-          <TablesChannelsTable :channels="data.channels" v-on:reload="fetch"/>
+        <div class="flex gap-2">
+          <UButton type="button" @click="fetch">Reload</UButton>
+          <UButton type="button" @click="open_subscribe = true">Subscribe</UButton>
+        </div>
+        <TablesChannelsTable :channels="data.channels" v-on:reload="fetch"/>
       </UCard>
     </div>
   </div>

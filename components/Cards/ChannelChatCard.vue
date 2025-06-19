@@ -15,12 +15,44 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import UCard from '@nuxt/ui/components/Card.vue';
+import * as z from "zod";
+import type {FormSubmitEvent} from "@nuxt/ui";
 
 const props = defineProps<{ channel: string }>()
 const messages = ref<string[]>([])
 
 const { connect, close } = useSocket()
 const route = useRoute();
+
+const schema = z.object({
+  value: z.string(),
+})
+
+type Schema = z.output<typeof schema>
+
+const state = reactive<Partial<Schema>>({
+  value: '',
+})
+
+const submit = async (event: FormSubmitEvent<Schema>) => {
+  try {
+    const response = await $fetch(`/api/services/${route.params.id}/publish`, {
+      method: 'POST',
+      body: {
+        channel: props.channel,
+        value: event.data.value
+      }
+    })
+
+    toast.add({title: t('forms.event', { name: "Published"}), color: 'success'})
+    console.log("Published ⤑ Response", response)
+    emit('success');
+  } catch (error) {
+    toast.add({title: t('forms.event', { name: "Published ⤑ Exception"}), color: 'error'})
+    console.error("Published ⤑ Exception", error)
+    throw error;
+  }
+}
 
 onMounted(() => {
   connect(props.channel, route.params.id!, (msg) => {
@@ -40,10 +72,18 @@ onUnmounted(() => {
   <div>
     <h2 class="text-lg font-bold">Channel: {{ props.channel }}</h2>
     <pre
-        class="w-full h-64 p-2 border border-gray-700 rounded mt-2 font-mono"
+        class="w-full h-64 p-2 mb-4 border border-gray-700 rounded mt-2 font-mono"
         readonly
         v-html="messages.join('\n')"
     ></pre>
+
+    <UForm :schema="schema" :state="state" class="space-y-4" @submit="submit">
+      <UFormField label="Value" name="value">
+        <UInput v-model="state.value" type="text" class="w-full" />
+      </UFormField>
+
+      <UButton label="Send" type="submit"/>
+    </UForm>
   </div>
 </template>
 
