@@ -1,4 +1,3 @@
-<script setup lang="ts">
 // Copyright (C) 2025 Ian Torres
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,26 +13,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-const {t} = useI18n()
-const services = useServices();
+import { defineStore } from 'pinia'
 
-onMounted(async () => {
-  await services.setup();
+interface StoredSubscription {
+    name: string
+}
+
+export const useSubscriptions = defineStore('subscriptions', () => {
+
+    const subscriptions : Ref<StoredSubscription> = ref([]);
+
+    return {
+        subscriptions,
+    }
 })
-</script>
-
-<template>
-  <UModal v-model:open="services.attributes.formOpen"
-          :title="t('welcome.modal.title')"
-          :description="t('welcome.modal.description')"
-          :dismissible="true"
-          :close="true">
-    <template #body>
-      <FormsServicesForm/>
-    </template>
-  </UModal>
-  <UTable :data="services.services" :columns="services.columns" class="flex-1" />
-  <div class="p-4">
-    <UButton :label="t('forms.add_server')" type="button" variant="outline" @click="services.attributes.formOpen = true"/>
-  </div>
-</template>

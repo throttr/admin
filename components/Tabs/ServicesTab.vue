@@ -61,7 +61,7 @@ const items = ref<TabsItem[]>([
 </script>
 
 <template>
-  <UTabs v-model="active" size="lg" variant="pill" :content="false" :items="items" class="w-full" />
+  <UTabs v-model="active" size="lg" variant="link" :items="items" class="w-full" orientation="vertical" />
 </template>
 
 <style scoped>

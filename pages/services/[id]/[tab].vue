@@ -19,14 +19,6 @@ import type { BreadcrumbItem } from "@nuxt/ui";
 const route = useRoute()
 
 const items = ref<BreadcrumbItem[]>([
-  {
-    label: 'Home',
-    to: '/'
-  },
-  {
-    label: 'Instances',
-    to: '/services'
-  },
 ])
 
 onMounted(() => {
@@ -76,8 +68,6 @@ onMounted(() => {
     <div class="py-10">
       <UBreadcrumb :items="items" />
     </div>
-
-    <TabsServicesTab class="mb-10" />
 
     <div v-if="route.params.tab === 'overview'">
       <ResourcesServicesOverview />

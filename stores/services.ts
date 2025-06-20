@@ -92,12 +92,7 @@ export const useServices = defineStore('services', () => {
         {
             accessorKey: 'host',
             header: 'Host',
-            cell: ({ row }) => `${row.original.instance.config.host}`,
-        },
-        {
-            accessorKey: 'port',
-            header: 'Port',
-            cell: ({ row }) => `${row.original.instance.config.port}`,
+            cell: ({ row }) => `${row.original.instance.config.host}:${row.original.instance.config.port}`,
         },
         {
             accessorKey: 'status',
@@ -109,27 +104,6 @@ export const useServices = defineStore('services', () => {
                     isConnected ? 'Connected' : 'Disconnected'
                 )
             }
-        },
-        {
-            accessorKey: 'connections',
-            header: 'Connections',
-            cell: ({ row }) => `${row.original.instance.config.max_connections}`,
-        },
-        {
-            accessorKey: 'value_size',
-            header: 'Value Size',
-            cell: ({ row }) => {
-                switch (row.original.instance.config.value_size) {
-                    case ValueSize.UInt8:
-                        return "UINT8";
-                    case ValueSize.UInt16:
-                        return "UINT16";
-                    case ValueSize.UInt32:
-                        return "UINT32";
-                    case ValueSize.UInt64:
-                        return "UINT64";
-                }
-            },
         },
         {
             id: 'actions',

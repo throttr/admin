@@ -21,6 +21,8 @@ import type {FormSubmitEvent} from "@nuxt/ui";
 const props = defineProps<{ channel: string }>()
 const messages = ref<string[]>([])
 
+const toast = useToast();
+const { t } = useI18n();
 const { connect, close } = useSocket()
 const route = useRoute();
 
@@ -46,7 +48,6 @@ const submit = async (event: FormSubmitEvent<Schema>) => {
 
     toast.add({title: t('forms.event', { name: "Published"}), color: 'success'})
     console.log("Published ⤑ Response", response)
-    emit('success');
   } catch (error) {
     toast.add({title: t('forms.event', { name: "Published ⤑ Exception"}), color: 'error'})
     console.error("Published ⤑ Exception", error)
