@@ -82,8 +82,6 @@ const submit = async (event: FormSubmitEvent<Schema>) => {
     })
 
     toast.add({title: t('forms.event', { name: "Counter Created"}), color: 'success'})
-    console.log("Counter Created ⤑ Response", response)
-
     emit('success');
 
   } catch (error) {

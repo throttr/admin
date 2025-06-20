@@ -96,11 +96,6 @@ onMounted(async () => {
     state.attribute_type = AttributeType.Quota.valueOf();
     state.change_type = ChangeType.Decrease.valueOf();
   }
-  console.log(props.stored_key);
-  // state.ttl_type = props.stored_key.ttl_type;
-  // const response = await services.query(route.params.id, state.key!);
-  // state.ttl = response.ttl as number;
-  // state.quota = response.quota as number;
 });
 
 const submit = async (event: FormSubmitEvent<Schema>) => {
@@ -115,14 +110,10 @@ const submit = async (event: FormSubmitEvent<Schema>) => {
       }
     })
 
-    console.log(response);
-
     if (response.success) {
       toast.add({title: t('forms.event', { name: "Key Update ⤑ Success"}), color: 'success'})
-      console.log("Key Updated ⤑ Accepted", response)
     } else {
       toast.add({title: t('forms.event', { name: "Key Update ⤑ Rejected"}), color: 'error'})
-      console.log("Key Updated ⤑ Rejected", response)
     }
 
 

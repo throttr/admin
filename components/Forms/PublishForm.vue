@@ -48,7 +48,6 @@ const submit = async (event: FormSubmitEvent<Schema>) => {
     })
 
     toast.add({title: t('forms.event', { name: "Published"}), color: 'success'})
-    console.log("Published ⤑ Response", response)
 
     emit('success');
 

@@ -35,7 +35,6 @@ const fetch = async () => {
   loading.value = true;
   data.value = await services.list(route.params.id) as ListResponse;
   toast.add({title: t('forms.event', { name: "Keys Retrieved ⤑ Success"}), color: 'success'})
-  console.log("Keys Retrieved ⤑ Success", data.value)
   loading.value = false;
 }
 
