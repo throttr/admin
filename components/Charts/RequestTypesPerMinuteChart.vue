@@ -124,6 +124,8 @@ const xFormatter = (i: number): string | number => `${chart_data.value[i].date}`
       :height="240"
       :categories="categories"
       y-label="Requests per minute"
+      :x-num-ticks="10"
+      :y-num-ticks="10"
       :y-grid-line="true"
       :x-formatter="xFormatter"
       :curve-type="CurveType.MonotoneX"

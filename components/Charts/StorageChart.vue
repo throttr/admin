@@ -25,7 +25,7 @@ const chart_data = computed(() => {
       total_counters: item.total_counters,
       total_buffers: item.total_buffers,
     }
-  })
+  }).slice(-1)
 })
 
 const xFormatter = (i: number): string | number => `${chart_data.value[i].date}`
@@ -39,11 +39,12 @@ const xFormatter = (i: number): string | number => `${chart_data.value[i].date}`
       :categories="categories"
       :radius="4"
       :y-axis="['total_buffers', 'total_counters']"
+      y-label="Quantity"
       :group-padding="0"
       :bar-padding="0.2"
-      :xNumTicks="5"
+      :xNumTicks="1"
       :x-formatter="xFormatter"
       :legend-position="LegendPosition.Top"
-      :y-num-ticks="4"
+      :y-num-ticks="1"
   />
 </template>
