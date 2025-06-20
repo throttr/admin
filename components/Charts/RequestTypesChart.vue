@@ -127,6 +127,8 @@ const xFormatter = (i: number): string | number => `${chart_data.value[i].date}`
       y-label="Requests"
       :y-grid-line="true"
       :x-formatter="xFormatter"
+      :x-num-ticks="10"
+      :y-num-ticks="10"
       :curve-type="CurveType.MonotoneX"
       :legend-position="LegendPosition.Top"
       :hide-legend="false"

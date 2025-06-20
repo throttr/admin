@@ -36,9 +36,9 @@ const xFormatter = (i: number): string | number => `${chart_data.value[i].date}`
   <LineChart
       :data="chart_data"
       :height="150"
-      y-label="Allocated Bytes"
-      :x-num-ticks="4"
-      :y-num-ticks="4"
+      y-label="Allocated in bytes"
+      :x-num-ticks="5"
+      :y-num-ticks="3"
       :categories="categories"
       :x-formatter="xFormatter"
       :y-grid-line="true"

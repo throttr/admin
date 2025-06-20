@@ -72,7 +72,7 @@ onUnmounted(() => {
   <div>
     <h2 class="text-lg font-bold">Channel: {{ props.channel }}</h2>
     <pre
-        class="w-full h-64 p-2 mb-4 border border-gray-700 rounded mt-2 font-mono"
+        class="w-full h-64 p-2 mb-4 border border-gray-700 rounded mt-2 font-mono overflow-auto"
         readonly
         v-html="messages.join('\n')"
     ></pre>
