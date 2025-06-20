@@ -47,9 +47,12 @@ const submit = async (event: FormSubmitEvent<Schema>) => {
       }
     })
 
+    toast.add({title: t('forms.event', { name: "Published"}), color: 'success'})
+
     emit('success');
 
   } catch (error) {
+    toast.add({title: t('forms.event', { name: "Published ⤑ Exception"}), color: 'error'})
     console.error("Published ⤑ Exception", error)
 
     throw error;
