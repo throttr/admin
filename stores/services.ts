@@ -80,7 +80,7 @@ export const useServices = defineStore('services', () => {
         ip_address: 'throttr-server',
         value_size: 'UINT16',
         port: 9000,
-        connections: 1,
+        connections: 32,
     })
 
     const columns: TableColumn<StoredService>[] = [
