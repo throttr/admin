@@ -58,7 +58,7 @@ onMounted(async () => {
               :close="true"
               class="max-w-sm">
         <template #body>
-          <FormsSubscribeForm />
+          <FormsSubscribeForm v-on:chat_closed="open_subscribe = false" />
         </template>
       </UModal>
 

@@ -17,8 +17,36 @@
 
 <template>
   <div>
-    <div class="mx-auto">
-      <slot />
+    <div class="hidden xl:fixed xl:inset-y-0 xl:z-50 xl:flex xl:w-72 xl:flex-col">
+      <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-black/10 px-6 ring-1 ring-white/5">
+        <div class="flex h-24 shrink-0 items-center">
+          <img class="h-16 w-auto" src="/logo.png" alt="Throttr" />
+        </div>
+        <nav class="flex flex-1 flex-col">
+          <ul role="list" class="flex flex-1 flex-col gap-y-7">
+            <li class="w-full">
+              <TabsServicesTab />
+            </li>
+            <li>
+              <div class="text-xs/6 font-semibold text-gray-400">Subscriptions</div>
+              <ListsSubscriptionsList />
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="xl:pl-72">
+      <main class="lg:pr-96">
+       <slot/>
+      </main>
+
+      <aside class="bg-black/10 lg:fixed lg:top-0 lg:right-0 lg:bottom-0 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5">
+        <header class="flex items-center justify-between border-b border-white/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+          <h2 class="text-base/7 font-semibold text-white">Instances</h2>
+        </header>
+        <ListsInstancesList />
+      </aside>
     </div>
   </div>
 </template>

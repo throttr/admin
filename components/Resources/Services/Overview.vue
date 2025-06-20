@@ -84,15 +84,10 @@ onUnmounted(() => {
 <template>
   <div>
     <div v-if="data.success">
-      <div class="grid grid-cols-4 gap-10 mb-10">
-
-        <div>
-          <div>
-            <h1 class="text-2xl mb-10">Overview</h1>
-          </div>
-
+      <div>
+        <div class="mb-10">
           <UCard>
-            <div class="grid grid-cols-2 gap-10">
+            <div class="grid grid-cols-4 gap-10">
               <MetricCard
                   title="Report At" :value="formatDate(data.timestamp, false)" />
               <MetricCard
@@ -106,11 +101,11 @@ onUnmounted(() => {
           </UCard>
         </div>
 
-        <div class="col-span-3">
+        <div>
           <div class="mb-10">
             <h1 class="text-2xl">Service</h1>
           </div>
-          <div class="grid grid-cols-2 gap-10">
+          <div class="grid grid-cols-2 gap-10 mb-10">
             <UCard>
               <ChartsRequestTypesChart :historic="historic"/>
             </UCard>

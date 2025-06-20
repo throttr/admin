@@ -20,7 +20,7 @@ import type {FormSubmitEvent} from "@nuxt/ui";
 
 const {t} = useI18n()
 
-const emit = defineEmits(["success"]);
+const emit = defineEmits(["chat_closed"]);
 
 const schema = z.object({
   channel: z.string(),
@@ -32,8 +32,7 @@ const state = reactive<Partial<Schema>>({
   channel: '',
 })
 
-const toast = useToast()
-const route = useRoute()
+const subscriptions = useSubscriptions();
 
 const open_chat = ref(false);
 const channel_listen = ref("");
@@ -41,11 +40,23 @@ const channel_listen = ref("");
 const submit = async (event: FormSubmitEvent<Schema>) => {
   try {
     channel_listen.value = event.data.channel;
+
+    subscriptions.subscriptions.push({
+      name: event.data.channel,
+    })
+
     open_chat.value = true;
   } catch (error) {
     throw error;
   }
 }
+
+watch(open_chat, (next, old) => {
+  console.log(old, next);
+  if (old == true && next == false) {
+    emit("chat_closed");
+  }
+})
 </script>
 
 <template>
