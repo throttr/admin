@@ -61,9 +61,7 @@ const columns: TableColumn<ChannelItem>[] = [
         label: 'View',
         async onSelect() {
           channel.value = await services.channel(route.params.id, row.original.channel);
-          console.log(channel.value);
           toast.add({title: t('forms.event', {name: "Channel Details Retrieved ⤑ Success"}), color: 'success'})
-          console.log("Channel Details Retrieved ⤑ Success", row.original.channel)
           open_channel.value = true;
         }
       }, {

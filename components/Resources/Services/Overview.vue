@@ -29,28 +29,6 @@ const data : Ref<InfoResponse> = ref({
   success: false
 } as InfoResponse);
 
-const sections = [
-  { name: 'ALL', totalKey: 'total_requests', perMinuteKey: 'total_requests_per_minute' },
-  { name: 'INSERT', totalKey: 'total_insert_requests', perMinuteKey: 'total_insert_requests_per_minute' },
-  { name: 'QUERY', totalKey: 'total_query_requests', perMinuteKey: 'total_query_requests_per_minute' },
-  { name: 'UPDATE', totalKey: 'total_update_requests', perMinuteKey: 'total_update_requests_per_minute' },
-  { name: 'PURGE', totalKey: 'total_purge_requests', perMinuteKey: 'total_purge_requests_per_minute' },
-  { name: 'SET', totalKey: 'total_set_requests', perMinuteKey: 'total_set_requests_per_minute' },
-  { name: 'GET', totalKey: 'total_get_requests', perMinuteKey: 'total_get_requests_per_minute' },
-  { name: 'LIST', totalKey: 'total_list_requests', perMinuteKey: 'total_list_requests_per_minute' },
-  { name: 'INFO', totalKey: 'total_info_requests', perMinuteKey: 'total_info_requests_per_minute' },
-  { name: 'STAT', totalKey: 'total_stat_requests', perMinuteKey: 'total_stat_requests_per_minute' },
-  { name: 'STATS', totalKey: 'total_stats_requests', perMinuteKey: 'total_stats_requests_per_minute' },
-  { name: 'SUBSCRIBE', totalKey: 'total_subscribe_requests', perMinuteKey: 'total_subscribe_requests_per_minute' },
-  { name: 'UNSUBSCRIBE', totalKey: 'total_unsubscribe_requests', perMinuteKey: 'total_unsubscribe_requests_per_minute' },
-  { name: 'PUBLISH', totalKey: 'total_publish_requests', perMinuteKey: 'total_publish_requests_per_minute' },
-  { name: 'CONNECTIONS', totalKey: 'total_connections_requests', perMinuteKey: 'total_connections_requests_per_minute' },
-  { name: 'CONNECTION', totalKey: 'total_connection_requests', perMinuteKey: 'total_connection_requests_per_minute' },
-  { name: 'CHANNELS', totalKey: 'total_channels_requests', perMinuteKey: 'total_channels_requests_per_minute' },
-  { name: 'CHANNEL', totalKey: 'total_channel_requests', perMinuteKey: 'total_channel_requests_per_minute' },
-  { name: 'WHOAMI', totalKey: 'total_whoami_requests', perMinuteKey: 'total_whoami_requests_per_minute' },
-];
-
 const intervalId = ref()
 
 const fetch = async (silence: boolean = false) => {
@@ -64,20 +42,17 @@ const fetch = async (silence: boolean = false) => {
   if (historic.value.length > 10) {
     historic.value.shift();
   }
-  console.log("Metrics Retrieved ⤑ Success", data.value)
 }
 
 onMounted(async () => {
   await fetch()
   intervalId.value = setInterval(async () => {
     await fetch(true);
-    console.log("OVERVIEW INFO INTERVAL ASSIGNED")
   }, 1000)
 })
 
 onUnmounted(() => {
   clearInterval(intervalId.value);
-  console.log("OVERVIEW INFO INTERVAL REMOVED")
 })
 </script>
 

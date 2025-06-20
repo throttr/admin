@@ -82,8 +82,6 @@ const submit = async (event: FormSubmitEvent<Schema>) => {
     })
 
     toast.add({title: t('forms.event', { name: "Buffer Created"}), color: 'success'})
-    console.log("Buffer Created ⤑ Response", response)
-
     emit('success');
 
   } catch (error) {

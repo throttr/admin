@@ -38,7 +38,6 @@ const fetch = async () => {
   loading.value = true;
   data.value = await services.channels(route.params.id) as ChannelsResponse;
   toast.add({title: t('forms.event', {name: "Channels Retrieved ⤑ Success"}), color: 'success'})
-  console.log("Stats Retrieved ⤑ Success", data.value)
   loading.value = false;
 }
 

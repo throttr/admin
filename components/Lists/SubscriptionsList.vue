@@ -36,13 +36,14 @@ const subscriptions = useSubscriptions();
       <FormsSubscribeForm v-on:chat_closed="open_subscribe = false" />
     </template>
   </UModal>
+  <div v-if="subscriptions.subscriptions.length > 0" class="text-xs/6 font-semibold text-gray-400">Subscriptions</div>
   <ul role="list" class="-mx-2 mt-2 space-y-1">
     <li v-for="subscription in subscriptions.subscriptions" :key="subscription.name">
       <UButton variant="link" @click="open(subscription.name)"># {{subscription.name }}</UButton>
     </li>
   </ul>
-  <div class="mt-5">
-    <UButton type="button" variant="outline" @click="open_subscribe = true">Add</UButton>
+  <div class="mt-2">
+    <UButton type="button" variant="outline" size="xs" @click="open_subscribe = true">Add Subscription</UButton>
   </div>
 </template>
 

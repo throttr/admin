@@ -114,7 +114,6 @@ const columns: TableColumn<ListItem>[] = [
               break;
           }
           toast.add({title: t('forms.event', { name: "Key Details Retrieved ⤑ Success"}), color: 'success'})
-          console.log("Key Details Retrieved ⤑ Success", row.original.key)
         }
       }, {
         label: 'Update',
@@ -131,11 +130,9 @@ const columns: TableColumn<ListItem>[] = [
           const response = await services.stat(route.params.id, row.original.key);
           if (response.success) {
             toast.add({title: t('forms.event', { name: "Key Metrics Retrieved ⤑ Success"}), color: 'success'})
-            console.log("Key Metrics Retrieved ⤑ Success", row.original.key)
             stat.value = response;
           } else {
             toast.add({title: t('forms.event', { name: "Key Metrics Retrieved ⤑ Failed"}), color: 'error'})
-            console.log("Key Metrics Retrieved ⤑ Failed", row.original.key)
           }
           open_stats.value = true;
         }
@@ -147,11 +144,9 @@ const columns: TableColumn<ListItem>[] = [
           const response = await services.purge(route.params.id, row.original.key);
           if (response.success) {
             toast.add({title: t('forms.event', { name: "Key Purged ⤑ Success"}), color: 'success'})
-            console.log("Key Purged ⤑ Success", row.original.key)
             emit('reload');
           } else {
             toast.add({title: t('forms.event', { name: "Key Purged ⤑ Failed"}), color: 'error'})
-            console.log("Key Purged ⤑ Failed", row.original.key)
           }
         }
       }]

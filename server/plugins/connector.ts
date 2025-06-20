@@ -14,6 +14,4 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 export default defineNitroPlugin((nitroApp) => {
-    // console.log('Nitro plugin', nitroApp)
-    console.log('Nitro plugin [Connector]')
 })

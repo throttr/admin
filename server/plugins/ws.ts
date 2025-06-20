@@ -5,7 +5,6 @@ import {StatusResponse, RequestType} from "@throttr/sdk";
 export default defineNitroPlugin((nitroApp) => {
     const wss = new WebSocketServer({ port: 4000 })
 
-    console.log('Nitro plugin [Server]')
     const services = getServices();
 
     const subscriptions = new Map<string, Set<WebSocket>>() // canal -> conexiones

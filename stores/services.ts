@@ -160,7 +160,6 @@ export const useServices = defineStore('services', () => {
             })
 
             toast.add({title: t('forms.event', { name: "Service Registered"}), color: 'success'})
-            console.log("Service Registered ⤑ Response", response)
 
             await setup();
         } catch (error) {
@@ -284,13 +283,11 @@ export const useServices = defineStore('services', () => {
             })
 
             toast.add({title: t('forms.invoked', { name: "Fetch Registered Services"}), color: 'success'})
-            console.log("Fetch Registered Services ⤑ Response", response)
 
             services.value = response.data as StoredService[];
             attributes.value.formOpen = services.value.length === 0;
         } catch (error) {
             toast.add({title: t('forms.exception', { name: "Fetch Registered Services"}), color: 'error'})
-            console.error("Fetch Registered Services ⤑ Exception", error)
 
             throw error;
         }

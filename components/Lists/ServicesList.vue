@@ -14,44 +14,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import {type StatsItem, type StatsResponse} from "@throttr/sdk";
-import UButton from "#ui/components/Button.vue";
-
-const route = useRoute()
-const services = useServices()
-const toast = useToast()
 const {t} = useI18n()
+const services = useServices();
 
-const data = ref({
-  success: false,
-  keys: [] as StatsItem[]
-});
-
-const loading = ref(true);
-
-const fetch = async () => {
-  loading.value = true;
-  data.value = await services.stats(route.params.id) as StatsResponse;
-  toast.add({title: t('forms.event', { name: "Stats Retrieved ⤑ Success"}), color: 'success'})
-  loading.value = false;
-}
+const props = defineProps(['type'])
 
 onMounted(async () => {
-  await fetch()
+  await services.setup();
 })
 </script>
 
 <template>
-  <div>
-    <div v-if="!loading">
-      <UCard>
-        <UButton type="button" @click="fetch">Reload</UButton>
-          <TablesStatsTable :keys="data.keys" v-on:reload="fetch"/>
-      </UCard>
-    </div>
+  <UModal v-model:open="services.attributes.formOpen"
+          :title="t('welcome.modal.title')"
+          :description="t('welcome.modal.description')"
+          :dismissible="true"
+          :close="true">
+    <template #body>
+      <FormsServicesForm/>
+    </template>
+  </UModal>
+
+  <div class="mb-4">
+    <UButton :label="t('forms.add_server')" type="button" variant="outline" @click="services.attributes.formOpen = true"/>
+  </div>
+
+  <div class="grid grid-cols-1 gap-y-5">
+    <ItemsServicesItem v-for="service in services.services" :service="service" :type="props.type" class="cursor-pointer" @click="navigateTo(`/services/${service.id}`)"/>
   </div>
 </template>
-
-<style scoped>
-
-</style>

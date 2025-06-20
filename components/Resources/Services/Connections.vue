@@ -34,7 +34,6 @@ const fetch = async () => {
   loading.value = true;
   data.value = await services.connections(route.params.id) as ConnectionsResponse;
   toast.add({title: t('forms.event', { name: "Connections Retrieved ⤑ Success"}), color: 'success'})
-  console.log("Connections Retrieved ⤑ Success", data.value)
   loading.value = false;
 }
 

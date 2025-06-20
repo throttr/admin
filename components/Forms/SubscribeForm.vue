@@ -52,7 +52,6 @@ const submit = async (event: FormSubmitEvent<Schema>) => {
 }
 
 watch(open_chat, (next, old) => {
-  console.log(old, next);
   if (old == true && next == false) {
     emit("chat_closed");
   }

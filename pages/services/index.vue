@@ -52,8 +52,8 @@ onMounted(async () => {
       </template>
     </UModal>
     <div>
-      <UCard>
-        <TablesServicesTable/>
+      <UCard >
+        <ListsServicesList />
       </UCard>
     </div>
   </div>
