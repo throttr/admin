@@ -67,7 +67,7 @@ export const useServices = defineStore('services', () => {
     })
 
     const schema = z.object({
-        ip_address: z.string().ip({ version: "v4", message: t('forms.ip_address.on_error') }),
+        ip_address: z.string(),
         // @ts-ignore: This is-as documentation said.
         value_size: z.enum(attributes.value.value_sizes),
         port: z.number().max(65535, t('forms.port.on_error')),
@@ -77,7 +77,7 @@ export const useServices = defineStore('services', () => {
     type Schema = z.output<typeof schema>
 
     const state = reactive<Partial<Schema>>({
-        ip_address: '127.0.0.1',
+        ip_address: 'throttr-server',
         value_size: 'UINT16',
         port: 9000,
         connections: 1,
